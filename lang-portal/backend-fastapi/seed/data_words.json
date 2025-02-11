@@ -1,0 +1,12 @@
+[
+  {
+    "japanese": "こんにちは",
+    "romaji": "konnichiwa",
+    "english": "hello",
+    "parts": {
+      "0": {"japanese": "こん", "romaji": ["kon"]},
+      "1": {"japanese": "にち", "romaji": ["nichi"]},
+      "2": {"japanese": "は", "romaji": ["wa"]}
+    }
+  }
+]

@@ -3,24 +3,22 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 
-# Association table for many-to-many relationship between words and groups
-word_groups = Table(
-    'word_groups', Base.metadata,
-    Column('word_id', Integer, ForeignKey('words.id'), primary_key=True),
-    Column('group_id', Integer, ForeignKey('groups.id'), primary_key=True)
-)
-
 class Word(Base):
     __tablename__ = "words"
 
     id = Column(Integer, primary_key=True, index=True)
     kanji = Column(String, index=True)
-    romaji = Column(String)
-    english = Column(String)
+    romaji = Column(String, index=True)
+    english = Column(String, index=True)
     parts = Column(JSON)
 
     reviews = relationship("WordReviewItem", back_populates="word")
-    groups = relationship("Group", secondary=word_groups, back_populates="words")
+    groups = relationship("Group", secondary="word_groups", back_populates="words")
+
+class WordGroup(Base):
+    __tablename__ = "word_groups"
+    word_id = Column(Integer, ForeignKey("words.id"), primary_key=True)
+    group_id = Column(Integer, ForeignKey("groups.id"), primary_key=True)
 
 class Group(Base):
     __tablename__ = "groups"
@@ -29,15 +27,15 @@ class Group(Base):
     name = Column(String, index=True)
     words_count = Column(Integer, default=0)
 
-    words = relationship("Word", secondary=word_groups, back_populates="groups")
+    words = relationship("Word", secondary="word_groups", back_populates="groups")
 
 class StudyActivity(Base):
     __tablename__ = "study_activities"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, index=True)
     url = Column(String)
-    thumbnail_url = Column(String)  # Add this line to include the preview_url attribute
+    thumbnail_url = Column(String)
 
 class StudySession(Base):
     __tablename__ = "study_sessions"
