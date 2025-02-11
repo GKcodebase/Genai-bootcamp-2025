@@ -1,0 +1,59 @@
+# Database Initialization Guide
+
+This guide provides instructions on how to initialize the database for the project. The database is used to store words, groups, study activities, and other related data.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+- Python 3.7 or higher
+- SQLite3
+- SQLAlchemy
+- Alembic
+
+## Step-by-Step Instructions
+
+### 1. Set Up the Virtual Environment
+
+Create and activate a virtual environment for the project:
+
+```sh
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+```
+
+### 2. Configure Alembic
+Alembic is used for database migrations. Ensure that Alembic is configured correctly by editing the `alembic.ini` file:
+
+```sh
+# alembic.ini
+sqlalchemy.url = sqlite:///./words.db
+```
+### 3. Create Initial Migration
+Generate the initial migration script to create the database schema:
+
+```sh
+alembic revision --autogenerate -m "Initial migration"
+```
+### 4. Apply Migration
+Apply the migration to create the database schema:
+
+```sh
+alembic upgrade head
+```
+
+### 5. Seed the Database
+Run the seed script to populate the database with initial data:
+
+```sh
+python seed.py
+```
+### 6. Verify Database
+Verify that the database has been initialized correctly by checking the contents of the `words.db` file using SQLite3:
+
+```sh
+sqlite3 words.db
+.tables
+```
+
