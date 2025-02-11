@@ -1,10 +1,10 @@
-# Backend Server Technical Sepcs - Flask
+# Backend Server Technical Specs - FastAPI
 
 ## Business Goal:
 
-A language learning school wants to build a prototype of learning portal which will act as three things:
+A language learning school wants to build a prototype of a learning portal which will act as three things:
 - Inventory of possible vocabulary that can be learned
-- Act as a  Learning record store (LRS), providing correct and wrong score on practice vocabulary
+- Act as a Learning record store (LRS), providing correct and wrong scores on practice vocabulary
 - A unified launchpad to launch different learning apps
 
 ## Technical Requirements
@@ -19,41 +19,46 @@ A language learning school wants to build a prototype of learning portal which w
 
 ## Directory Structure
 
-``` text
+```text
     backend-fastapi/
     ├── app/
     │   ├── main.py           # FastAPI application
     │   ├── models.py         # SQLAlchemy models
     │   ├── schemas.py        # Pydantic schemas for request/response
     │   ├── crud.py           # Database operations
-    │   └── database.py       # Database setup and connection
+    │   ├── database.py       # Database setup and connection
+    │   └── routers/          # API routers
+    │       ├── words.py      # Words API endpoints
+    │       ├── groups.py     # Groups API endpoints
+    │       ├── study_sessions.py  # Study sessions API endpoints
+    │       └── study_activities.py  # Study activities API endpoints
     ├── db/
-    │   └── seeds/            # For initial data population
+    │   └── seed/             # For initial data population
+    │       └── seed_data.py  # Script to seed the database
     ├── requirements.txt      # Required dependencies
-    └── README.md # Project description and setup instructions
-    |
-    └── words.db
-
+    └── README.md             # Project description and setup instructions
+    └── words.db              # SQLite database file
 ```
+
 ## Database Schema
 
-Our database will be a single SQLite database called `words.db` that will be in the root of the project folder of `backend-fastapi`
+Our database will be a single SQLite database called `words.db` that will be in the `db/seed` folder of `backend-fastapi`.
 
 We have the following tables:
 
 - words - stored vocabulary words
   - id integer
-  - japasese string
+  - kanji string
   - romaji string
   - english string
   - parts json
-- words_groups - join table for words and groups (many-to-many)
-  - id integer
+- word_groups - join table for words and groups (many-to-many)
   - word_id integer
   - group_id integer
 - groups - thematic groups of words
   - id integer
   - name string
+  - words_count integer
 - study_sessions - records of study sessions grouping word_review_items
   - id integer
   - group_id integer
@@ -61,10 +66,11 @@ We have the following tables:
   - study_activity_id integer
 - study_activities - a specific study activity, linking a study session to group
   - id integer
-  - study_session_id integer
-  - group_id integer
-  - created_at datetime
+  - name string
+  - url string
+  - thumbnail_url string
 - word_review_items - a record of word practice, determining if the word was correct or not
+  - id integer
   - word_id integer
   - study_session_id integer
   - correct boolean
@@ -90,14 +96,14 @@ Returns information about the most recent study session.
 
 ### GET /api/dashboard/study_progress
 Returns study progress statistics.
-Please note that the frontend will determine progress bar basedon total words studied and total available words.
+Please note that the frontend will determine progress bar based on total words studied and total available words.
 
 #### JSON Response
 
 ```json
 {
   "total_words_studied": 3,
-  "total_available_words": 124,
+  "total_available_words": 124
 }
 ```
 
@@ -159,10 +165,12 @@ Returns quick overview statistics.
 - study_activity_id integer
 
 #### JSON Response
+```json
 {
   "id": 124,
   "group_id": 123
 }
+```
 
 ### GET /api/words
 
@@ -173,7 +181,7 @@ Returns quick overview statistics.
 {
   "items": [
     {
-      "japanese": "こんにちは",
+      "kanji": "こんにちは",
       "romaji": "konnichiwa",
       "english": "hello",
       "correct_count": 5,
@@ -193,7 +201,7 @@ Returns quick overview statistics.
 #### JSON Response
 ```json
 {
-  "japanese": "こんにちは",
+  "kanji": "こんにちは",
   "romaji": "konnichiwa",
   "english": "hello",
   "stats": {
@@ -248,7 +256,7 @@ Returns quick overview statistics.
 {
   "items": [
     {
-      "japanese": "こんにちは",
+      "kanji": "こんにちは",
       "romaji": "konnichiwa",
       "english": "hello",
       "correct_count": 5,
@@ -331,7 +339,7 @@ Returns quick overview statistics.
 {
   "items": [
     {
-      "japanese": "こんにちは",
+      "kanji": "こんにちは",
       "romaji": "konnichiwa",
       "english": "hello",
       "correct_count": 5,
@@ -391,32 +399,21 @@ Returns quick overview statistics.
 
 ## Task Runner Tasks
 
-Lets list out possible tasks we need for our lang portal.
+Let's list out possible tasks we need for our lang portal.
 
 ### Initialize Database
 This task will initialize the SQLite database called `words.db`.
 
-### Creation Database
+### Create Database
 
-Database will be created using alembic package
-Model needed to be defined in models.py
+The database will be created using SQLAlchemy.
+Models need to be defined in `models.py`.
 
 ### Seed Data
-This task will import json files and transform them into target data for our database.
+This task will import JSON files and transform them into target data for our database.
 
 All seed files live in the `seed` folder.
 
-In our task we should have DSL to specific each seed file and its expected group word name.
+In our task, we should have a DSL to specify each seed file and its expected group word name.
 
-seed files needed to be read and load to db.
-
-```json
-[
-  {
-    "kanji": "払う",
-    "romaji": "harau",
-    "english": "to pay",
-  },
-  
-]
-```
+Seed
