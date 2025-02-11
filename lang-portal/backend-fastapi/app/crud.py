@@ -20,9 +20,8 @@ def create_word(db: Session, word: schemas.WordCreate):
 def get_group(db: Session, group_id: int):
     return db.query(models.Group).filter(models.Group.id == group_id).first()
 
-def get_groups(db: Session, page: int = 1, sort_by: str = "name", order: str = "asc"):
-    offset = (page - 1) * 10
-    return db.query(models.Group).order_by(getattr(models.Group, sort_by).asc() if order == "asc" else getattr(models.Group, sort_by).desc()).offset(offset).limit(10).all()
+def get_groups(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Group).offset(skip).limit(limit).all()
 
 def create_group(db: Session, group: schemas.GroupCreate):
     db_group = models.Group(**group.dict())
