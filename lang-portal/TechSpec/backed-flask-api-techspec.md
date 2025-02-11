@@ -9,13 +9,13 @@ A language learning school wants to build a prototype of learning portal which w
 
 ## Technical Requirements
 
-- The backend will be built using python
+- The backend will be built using Python
 - The database will be SQLite3
-- The API will be built using fast-api
+- The API will be built using FastAPI
 - The API will always return JSON
-- There will no authentication or authorization
-- Everything be treated as a single user
-- I want to deploy this app as docker.
+- There will be no authentication or authorization
+- Everything will be treated as a single user
+- The app will be deployed as a Docker container
 
 ## Directory Structure
 
@@ -28,7 +28,6 @@ A language learning school wants to build a prototype of learning portal which w
     │   ├── crud.py           # Database operations
     │   └── database.py       # Database setup and connection
     ├── db/
-    │   ├── migrations/
     │   └── seeds/            # For initial data population
     ├── requirements.txt      # Required dependencies
     └── README.md # Project description and setup instructions
@@ -38,7 +37,7 @@ A language learning school wants to build a prototype of learning portal which w
 ```
 ## Database Schema
 
-Our database will be a single sqlite database called `words.db` that will be in the root of the project folder of `backend-fastapi`
+Our database will be a single SQLite database called `words.db` that will be in the root of the project folder of `backend-fastapi`
 
 We have the following tables:
 
@@ -48,7 +47,7 @@ We have the following tables:
   - romaji string
   - english string
   - parts json
-- words_groups - join table for words and groups many-to-many
+- words_groups - join table for words and groups (many-to-many)
   - id integer
   - word_id integer
   - group_id integer
@@ -395,26 +394,21 @@ Returns quick overview statistics.
 Lets list out possible tasks we need for our lang portal.
 
 ### Initialize Database
-This task will initialize the sqlite database called `words.db
+This task will initialize the SQLite database called `words.db`.
 
-### Migrate Database
-This task will run a series of migrations sql files on the database
+### Creation Database
 
-Migrations live in the `migrations` folder.
-The migration files will be run in order of their file name.
-The file names should looks like this:
-
-```sql
-0001_init.sql
-0002_create_words_table.sql
-```
+Database will be created using alembic package
+Model needed to be defined in models.py
 
 ### Seed Data
 This task will import json files and transform them into target data for our database.
 
-All seed files live in the `seeds` folder.
+All seed files live in the `seed` folder.
 
 In our task we should have DSL to specific each seed file and its expected group word name.
+
+seed files needed to be read and load to db.
 
 ```json
 [
