@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 
+def get_all_words(db: Session):
+    return db.query(models.Word).all()
+
 def get_words(db: Session, page: int = 1, sort_by: str = "kanji", order: str = "asc"):
     offset = (page - 1) * 10  # Pagination logic
     return db.query(models.Word).order_by(getattr(models.Word, sort_by).asc() if order == "asc" else getattr(models.Word, sort_by).desc()).offset(offset).limit(10).all()

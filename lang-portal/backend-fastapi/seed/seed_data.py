@@ -26,7 +26,7 @@ def seed_words(db: Session, data: list):
             kanji=item.get('kanji'),
             romaji=item.get('romaji'),
             english=item.get('english'),
-            parts=item.get('parts')
+            parts={str(i): part for i, part in enumerate(item.get('parts', []))}  # Convert list to dictionary
         )
         db.add(word)
     db.commit()
@@ -45,7 +45,7 @@ def seed_study_activities(db: Session, data: list):
     print("Study activities have been successfully inserted.")
 
 def load_json_data(file_path, seed_function):
-    if os.path.exists(file_path):
+    if (os.path.exists(file_path)):
         print(f"Loading data from {file_path}")
         data = read_json_file(file_path)
         print(f"Loaded {len(data)} items from JSON.")
@@ -61,10 +61,10 @@ def main():
     seeds_folder = os.path.dirname(__file__)
 
     # Seed words
-    # words_file_path = os.path.join(seeds_folder, 'data_adjectives.json')
-    # load_json_data(words_file_path, seed_words)
-    # words_file_path = os.path.join(seeds_folder, 'data_verbs.json')
-    # load_json_data(words_file_path, seed_words)
+    words_file_path = os.path.join(seeds_folder, 'data_adjectives.json')
+    load_json_data(words_file_path, seed_words)
+    words_file_path = os.path.join(seeds_folder, 'data_verbs.json')
+    load_json_data(words_file_path, seed_words)
 
     # Seed study activities
     study_activities_file_path = os.path.join(seeds_folder, 'study_activities.json')
