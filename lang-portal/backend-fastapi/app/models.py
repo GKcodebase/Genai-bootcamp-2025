@@ -1,8 +1,14 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON, DateTime
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, JSON, DateTime, Table
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 
+# Association table for many-to-many relationship between words and groups
+word_groups = Table(
+    'word_groups', Base.metadata,
+    Column('word_id', Integer, ForeignKey('words.id'), primary_key=True),
+    Column('group_id', Integer, ForeignKey('groups.id'), primary_key=True)
+)
 
 class Word(Base):
     __tablename__ = "words"
@@ -14,7 +20,7 @@ class Word(Base):
     parts = Column(JSON)
 
     reviews = relationship("WordReviewItem", back_populates="word")
-
+    groups = relationship("Group", secondary=word_groups, back_populates="words")
 
 class Group(Base):
     __tablename__ = "groups"
@@ -23,15 +29,7 @@ class Group(Base):
     name = Column(String, index=True)
     words_count = Column(Integer, default=0)
 
-    words = relationship("Word", secondary="word_groups", back_populates="groups")
-
-
-class WordGroup(Base):
-    __tablename__ = "word_groups"
-
-    word_id = Column(Integer, ForeignKey("words.id"), primary_key=True)
-    group_id = Column(Integer, ForeignKey("groups.id"), primary_key=True)
-
+    words = relationship("Word", secondary=word_groups, back_populates="groups")
 
 class StudyActivity(Base):
     __tablename__ = "study_activities"
@@ -39,7 +37,7 @@ class StudyActivity(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     url = Column(String)
-
+    thumbnail_url = Column(String)  # Add this line to include the preview_url attribute
 
 class StudySession(Base):
     __tablename__ = "study_sessions"
@@ -52,7 +50,6 @@ class StudySession(Base):
     group = relationship("Group")
     study_activity = relationship("StudyActivity")
     word_reviews = relationship("WordReviewItem", back_populates="session")
-
 
 class WordReviewItem(Base):
     __tablename__ = "word_review_items"
