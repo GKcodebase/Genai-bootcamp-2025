@@ -1,39 +1,47 @@
 package main
 
 import (
+	"lang-portal/backend_go/internal/handlers"
+	"lang-portal/backend_go/internal/models"
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"lang-portal/backend_go/internal/handlers"
-	"lang-portal/backend_go/internal/models"
 )
 
 func main() {
 	// Initialize database
-	if err := models.InitDB("words.db"); err != nil {
-		log.Fatal(err)
+	if err := models.InitDB("lang_learning.db"); err != nil {
+		panic(err)
 	}
 
-	// Set up Gin router
+	// Initialize router
 	r := gin.Default()
 
-	// API routes
-	api := r.Group("/api")
-	{
-		// Dashboard routes
-		api.GET("/dashboard/last_study_session", handlers.GetLastStudySession)
-		api.GET("/dashboard/study_progress", handlers.GetStudyProgress)
-		api.GET("/dashboard/quick-stats", handlers.GetQuickStats)
+	// Enable CORS
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, Authorization")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
 
-		// Study activities routes
-		api.GET("/study_activities/:id", handlers.GetStudyActivity)
-		api.GET("/study_activities/:id/study_sessions", handlers.GetStudyActivitySessions)
-		api.POST("/study_activities", handlers.CreateStudyActivity)
+	// Dashboard routes
+	r.GET("/api/dashboard/last_study_session", handlers.GetLastStudySession)
+	r.GET("/api/dashboard/study_progress", handlers.GetStudyProgress)
+	r.GET("/api/dashboard/quick-stats", handlers.GetQuickStats)
 
-		// Words routes
-		api.GET("/words", handlers.GetWords)
-		api.GET("/words/:id", handlers.GetWord)
-	}
+	// Study activities routes
+	r.GET("/api/study_activities/:id", handlers.GetStudyActivity)
+	r.GET("/api/study_activities/:id/study_sessions", handlers.GetStudyActivitySessions)
+	r.POST("/api/study_activities", handlers.CreateStudyActivity)
+
+	// Words routes
+	r.GET("/api/words", handlers.GetWords)
+	r.GET("/api/words/:id", handlers.GetWord)
 
 	// Run server
 	if err := r.Run(":8080"); err != nil {

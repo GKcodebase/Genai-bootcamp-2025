@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"lang-portal/backend_go/internal/service"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"lang-portal/backend_go/internal/service"
 )
 
 var wordService = service.NewWordService()
@@ -25,10 +25,10 @@ func GetWords(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"items": words,
 		"pagination": gin.H{
-			"current_page":    page,
-			"total_pages":     totalPages,
-			"total_items":     totalItems,
-			"items_per_page":  perPage,
+			"current_page":   page,
+			"total_pages":    totalPages,
+			"total_items":    totalItems,
+			"items_per_page": perPage,
 		},
 	})
 }
@@ -47,13 +47,11 @@ func GetWord(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"id":              word.ID,
-		"original_text":   word.OriginalText,
-		"translated_text": word.TranslatedText,
-		"pronunciation":   word.Pronunciation,
-		"part_of_speech": word.PartOfSpeech,
-		"example":        word.ExampleSentence,
-		"stats":          stats,
-		"groups":         groups,
+		"japanese": word.Japanese,
+		"romaji":   word.Romaji,
+		"english":  word.English,
+		"parts":    word.Parts,
+		"stats":    stats,
+		"groups":   groups,
 	})
 }

@@ -1,21 +1,22 @@
 package models
 
+type GroupStats struct {
+	TotalWordCount int `json:"total_word_count"`
+}
+
 type Group struct {
 	ID    int        `json:"id"`
 	Name  string     `json:"name"`
 	Stats GroupStats `json:"stats"`
 }
 
-type GroupStats struct {
-	TotalWordCount int `json:"total_word_count"`
-}
-
 func GetGroup(id int) (*Group, error) {
 	var group Group
 	err := db.QueryRow(`
-		SELECT g.id, g.name, COUNT(wg.word_id) as total_word_count
+		SELECT g.id, g.name, COUNT(w.id) as total_word_count
 		FROM groups g
 		LEFT JOIN words_groups wg ON g.id = wg.group_id
+		LEFT JOIN words w ON wg.word_id = w.id
 		WHERE g.id = ?
 		GROUP BY g.id`,
 		id).Scan(&group.ID, &group.Name, &group.Stats.TotalWordCount)
