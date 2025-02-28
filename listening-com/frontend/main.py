@@ -1,12 +1,13 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from backend.get_transcript import YouTubeTranscriptDownloader
 import streamlit as st
 from typing import Dict
 import json
 from collections import Counter
 import re
-
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from backend.chat import BedrockChat
 

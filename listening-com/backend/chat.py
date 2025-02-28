@@ -1,19 +1,24 @@
-# Create BedrockChat
-# bedrock_chat.py
+import os
+from dotenv import load_dotenv
 import boto3
 import streamlit as st
 from typing import Optional, Dict, Any
 
+# Load environment variables from .env file
+load_dotenv()
 
 # Model ID
 MODEL_ID = "amazon.nova-micro-v1:0"
 
-
-
 class BedrockChat:
     def __init__(self, model_id: str = MODEL_ID):
         """Initialize Bedrock chat client"""
-        self.bedrock_client = boto3.client('bedrock-runtime', region_name="us-east-1")
+        self.bedrock_client = boto3.client(
+            'bedrock-runtime',
+            region_name="us-east-1",
+            aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
+        )
         self.model_id = model_id
 
     def generate_response(self, message: str, inference_config: Optional[Dict[str, Any]] = None) -> Optional[str]:
@@ -37,7 +42,6 @@ class BedrockChat:
         except Exception as e:
             st.error(f"Error generating response: {str(e)}")
             return None
-
 
 if __name__ == "__main__":
     chat = BedrockChat()
