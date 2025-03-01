@@ -1,5 +1,6 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 from typing import Optional, List, Dict
+import os
 
 
 class YouTubeTranscriptDownloader:
@@ -48,20 +49,24 @@ class YouTubeTranscriptDownloader:
             print(f"An error occurred: {str(e)}")
             return None
 
-    def save_transcript(self, transcript: List[Dict], filename: str) -> bool:
+    def save_transcript(self, transcript: List[Dict], video_id: str) -> bool:
         """
         Save transcript to file
         
         Args:
             transcript (List[Dict]): Transcript data
-            filename (str): Output filename
+            video_id (str): YouTube video ID for filename
             
         Returns:
             bool: True if successful, False otherwise
         """
-        filename = f"./transcripts/{filename}.txt"
-        
         try:
+            # Create data/transcripts directory if it doesn't exist
+            os.makedirs("../backend/data/transcripts", exist_ok=True)
+            
+            # Full path for transcript file
+            filename = f"../backend/data/transcripts/{video_id}.txt"
+            
             with open(filename, 'w', encoding='utf-8') as f:
                 for entry in transcript:
                     f.write(f"{entry['text']}\n")
@@ -70,30 +75,43 @@ class YouTubeTranscriptDownloader:
             print(f"Error saving transcript: {str(e)}")
             return False
 
-def main(video_url, print_transcript=False):
+def main(video_url: str, print_transcript: bool = False) -> Optional[str]:
+    """
+    Main function to download and save transcript
+    
+    Args:
+        video_url (str): YouTube video URL
+        print_transcript (bool): Whether to print the transcript
+        
+    Returns:
+        Optional[str]: Video ID if successful, None otherwise
+    """
     # Initialize downloader
     downloader = YouTubeTranscriptDownloader()
     
+    # Extract video ID
+    video_id = downloader.extract_video_id(video_url)
+    if not video_id:
+        print("Failed to extract video ID")
+        return None
+    
     # Get transcript
-    transcript = downloader.get_transcript(video_url)
+    transcript = downloader.get_transcript(video_id)
     
     if transcript:
-        # Save transcript
-        video_id = downloader.extract_video_id(video_url)
         if downloader.save_transcript(transcript, video_id):
-            print(f"Transcript saved successfully to {video_id}.txt")
-            #Print transcript if True
+            print(f"Transcript saved successfully to data/transcripts/{video_id}.txt")
             if print_transcript:
-                # Print transcript
                 for entry in transcript:
                     print(f"{entry['text']}")
+            return video_id
         else:
             print("Failed to save transcript")
-        
     else:
         print("Failed to get transcript")
+    
+    return None
 
 if __name__ == "__main__":
     video_id = "https://www.youtube.com/watch?v=sY7L5cfCWno&list=PLkGU7DnOLgRMl-h4NxxrGbK-UdZHIXzKQ"  # Extract from URL: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     transcript = main(video_id, print_transcript=True)
-        

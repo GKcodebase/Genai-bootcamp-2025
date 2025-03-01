@@ -20,15 +20,60 @@ class BedrockChat:
             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
         )
         self.model_id = model_id
+        self.prompts = {
+            'translate_to_english': """
+                Translate the following Japanese text to English:
+                {text}
+                Please provide:
+                1. Translation
+                2. Word-by-word breakdown
+                3. Cultural notes (if any)
+            """,
+            'translate_to_japanese': """
+                Translate the following English text to Japanese:
+                {text}
+                Please provide:
+                1. Translation in Kanji/Hiragana
+                2. Romaji
+                3. Word-by-word breakdown
+                4. Usage examples
+            """,
+            'kanji_info': """
+                Analyze the following Japanese text:
+                {text}
+                Please provide:
+                1. Kanji breakdown
+                2. Readings (On'yomi and Kun'yomi)
+                3. Common compounds
+                4. Stroke order description
+                5. Example sentences
+            """,
+            'language_analysis': """
+                Analyze the following Japanese text:
+                {text}
+                Please provide:
+                1. Grammar points used
+                2. Level (N5-N1)
+                3. Similar expressions
+                4. Common usage contexts
+            """
+        }
 
-    def generate_response(self, message: str, inference_config: Optional[Dict[str, Any]] = None) -> Optional[str]:
+    def generate_response(self, message: str, response_type: str = 'translate_to_english', 
+                         inference_config: Optional[Dict[str, Any]] = None) -> Optional[str]:
         """Generate a response using Amazon Bedrock"""
         if inference_config is None:
             inference_config = {"temperature": 0.7}
 
+        # Get the appropriate prompt template
+        prompt_template = self.prompts.get(response_type, self.prompts['translate_to_english'])
+        
+        # Format the prompt with the message
+        formatted_prompt = prompt_template.format(text=message)
+
         messages = [{
             "role": "user",
-            "content": [{"text": message}]
+            "content": [{"text": formatted_prompt}]
         }]
 
         try:

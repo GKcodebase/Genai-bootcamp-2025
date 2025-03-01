@@ -10,7 +10,8 @@ from collections import Counter
 import re
 
 from backend.chat import BedrockChat
-
+from backend.structured_data import TranscriptStructurer  # Add this import at the top
+from backend.rag import RAGSystem
 
 # Page config
 st.set_page_config(
@@ -24,6 +25,14 @@ if 'transcript' not in st.session_state:
     st.session_state.transcript = None
 if 'messages' not in st.session_state:
     st.session_state.messages = []
+if 'structured_sections' not in st.session_state:
+    st.session_state.structured_sections = None
+if 'bedrock_chat' not in st.session_state:
+    st.session_state.bedrock_chat = BedrockChat()
+if 'rag_system' not in st.session_state:
+    st.session_state.rag_system = RAGSystem()
+if 'video_id' not in st.session_state:
+    st.session_state.video_id = None
 
 def render_header():
     """Render the header section"""
@@ -196,12 +205,24 @@ def render_transcript_stage():
         if st.button("Download Transcript"):
             try:
                 downloader = YouTubeTranscriptDownloader()
+                # Extract video ID from URL
+                video_id = downloader.extract_video_id(url)
+                if not video_id:
+                    st.error("Could not extract video ID from URL")
+                    return
+
                 transcript = downloader.get_transcript(url)
                 if transcript:
-                    # Store the raw transcript text in session state
+                    # Store the raw transcript text and video_id in session state
                     transcript_text = "\n".join([entry['text'] for entry in transcript])
                     st.session_state.transcript = transcript_text
-                    st.success("Transcript downloaded successfully!")
+                    st.session_state.video_id = video_id  # Store video_id in session state
+                    
+                    # Save the transcript to file
+                    if downloader.save_transcript(transcript, video_id):
+                        st.success(f"Transcript downloaded and saved successfully! Video ID: {video_id}")
+                    else:
+                        st.error("Failed to save transcript to file")
                 else:
                     st.error("No transcript found for this video.")
             except Exception as e:
@@ -240,39 +261,162 @@ def render_structured_stage():
     """Render the structured data stage"""
     st.header("Structured Data Processing")
     
+    # Initialize TranscriptStructurer
+    if 'structurer' not in st.session_state:
+        st.session_state.structurer = TranscriptStructurer()
+    
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("Dialogue Extraction")
-        # Placeholder for dialogue processing
-        st.info("Dialogue extraction will be implemented here")
+        st.subheader("Raw Transcript")
+        if st.session_state.transcript:
+            st.text_area(
+                label="Source text",
+                value=st.session_state.transcript,
+                height=300,
+                disabled=True
+            )
+            
+            if st.button("Process Transcript"):
+                with st.spinner("Processing transcript..."):
+                    try:
+                        structured_sections = st.session_state.structurer.structure_transcript(
+                            st.session_state.transcript
+                        )
+                        st.session_state.structured_sections = structured_sections
+                        st.success("Transcript processed successfully!")
+                    except Exception as e:
+                        st.error(f"Error processing transcript: {str(e)}")
+        else:
+            st.info("Please load a transcript in the Raw Transcript stage first")
         
     with col2:
-        st.subheader("Data Structure")
-        # Placeholder for structured data view
-        st.info("Structured data view will be implemented here")
+        st.subheader("Structured Output")
+        if st.session_state.structured_sections:
+            tabs = st.tabs(["Section 2", "Section 3"])
+            
+            for i, tab in enumerate(tabs):
+                section_num = i + 2  # Since we're skipping section 1
+                with tab:
+                    if section_num in st.session_state.structured_sections:
+                        st.text_area(
+                            label=f"Section {section_num}",
+                            value=st.session_state.structured_sections[section_num],
+                            height=300,
+                            disabled=True
+                        )
+                    else:
+                        st.info(f"No content for Section {section_num}")
+            
+            # Save button
+            if st.button("Save Structured Data"):
+                try:
+                    # Use the video_id from session state
+                    video_id = st.session_state.video_id if st.session_state.video_id else "processed_transcript"
+                    save_path = f"../backend/data/questions/{video_id}.txt"
+                    if st.session_state.structurer.save_questions(
+                        st.session_state.structured_sections, 
+                        save_path
+                    ):
+                        st.success(f"Structured data saved successfully for video ID: {video_id}")
+                    else:
+                        st.error("Failed to save structured data")
+                except Exception as e:
+                    st.error(f"Error saving structured data: {str(e)}")
+        else:
+            st.info("Process a transcript to see structured output")
 
 def render_rag_stage():
     """Render the RAG implementation stage"""
-    st.header("RAG System")
+    st.header("Japanese Learning Assistant with RAG")
     
-    # Query input
-    query = st.text_input(
-        "Test Query",
-        placeholder="Enter a question about Japanese..."
+    # Load documents button
+    if st.button("Load Processed Documents"):
+        with st.spinner("Loading documents into RAG system..."):
+            if st.session_state.rag_system.load_processed_documents():
+                st.success("Documents loaded successfully!")
+            else:
+                st.error("Failed to load documents")
+    
+    # Analysis type selector
+    analysis_type = st.selectbox(
+        "Select Analysis Type",
+        options=[
+            "translate_to_english",
+            "translate_to_japanese",
+            "kanji_info",
+            "language_analysis"
+        ],
+        format_func=lambda x: x.replace('_', ' ').title()
     )
+
+    # Query input and button in columns
+    col_query, col_button = st.columns([3, 1])
     
-    col1, col2 = st.columns(2)
+    with col_query:
+        query = st.text_input(
+            "Enter Text",
+            placeholder="Enter Japanese or English text..."
+        )
     
-    with col1:
-        st.subheader("Retrieved Context")
-        # Placeholder for retrieved contexts
-        st.info("Retrieved contexts will appear here")
-        
-    with col2:
-        st.subheader("Generated Response")
-        # Placeholder for LLM response
-        st.info("Generated response will appear here")
+    with col_button:
+        search_button = st.button("Analyze", type="primary", use_container_width=True)
+    
+    # Process query when button is clicked
+    if search_button and query:
+        with st.spinner("Analyzing and retrieving relevant content..."):
+            # Get context from RAG system
+            rag_results = st.session_state.rag_system.query_similar(query)
+            
+            # Initialize BedrockChat if not in session state
+            if 'bedrock_chat' not in st.session_state:
+                st.session_state.bedrock_chat = BedrockChat()
+            
+            # Generate response using Bedrock
+            bedrock_response = st.session_state.bedrock_chat.generate_response(
+                query, 
+                response_type=analysis_type
+            )
+            
+            # Display results in columns
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.subheader("Similar Content")
+                if rag_results and rag_results['documents']:
+                    for i, (doc, metadata) in enumerate(zip(
+                        rag_results['documents'][0], 
+                        rag_results['metadatas'][0]
+                    )):
+                        with st.expander(f"Reference {i+1}"):
+                            st.markdown(doc)
+                            st.markdown("**Metadata:**")
+                            st.json(metadata)
+                else:
+                    st.info("No similar content found in the database")
+                
+            with col2:
+                st.subheader("Analysis Results")
+                if bedrock_response:
+                    # Create tabs for different views
+                    response_tab, context_tab = st.tabs(["Analysis", "Context"])
+                    
+                    with response_tab:
+                        st.markdown(bedrock_response)
+                    
+                    with context_tab:
+                        st.markdown("""
+                        **Analysis Type:** {}
+                        
+                        **Query:** {}
+                        """.format(
+                            analysis_type.replace('_', ' ').title(),
+                            query
+                        ))
+                else:
+                    st.error("Failed to generate analysis")
+    else:
+        st.info("Enter text and click Analyze to start")
 
 def render_interactive_stage():
     """Render the interactive learning stage"""
