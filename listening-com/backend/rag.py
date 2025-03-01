@@ -6,8 +6,12 @@ from dotenv import load_dotenv
 class RAGSystem:
     def __init__(self, collection_name: str = "jlptn5-listening-comprehension"):
         """Initialize RAG system with ChromaDB"""
-        # Create persistent client with specific path
-        self.client = chromadb.PersistentClient(path="backend/data/chromadb")
+        # Set fixed path for ChromaDB relative to project root
+        self.project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.chromadb_path = os.path.join(self.project_root, "backend", "data", "chromadb")
+        
+        # Create persistent client with fixed path
+        self.client = chromadb.PersistentClient(path=self.chromadb_path)
         
         # Get or create collection
         try:
@@ -15,9 +19,13 @@ class RAGSystem:
         except:
             self.collection = self.client.create_collection(collection_name)
         
-    def load_processed_documents(self, base_path: str = "../backend/data/questions") -> bool:
+    def load_processed_documents(self) -> bool:
         """Load processed documents from the questions directory"""
         try:
+            # Get absolute path to questions directory
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            base_path = os.path.join(project_root, "backend", "data", "questions")
+            
             documents = []
             metadatas = []
             ids = []
@@ -85,6 +93,16 @@ class RAGSystem:
         except Exception as e:
             print(f"Error querying documents: {str(e)}")
             return None
+
+    def cleanup_collection(self):
+        """Clean up the collection"""
+        try:
+            self.collection.delete(where={})
+            print("Cleared all documents from collection")
+            return True
+        except Exception as e:
+            print(f"Error cleaning up collection: {str(e)}")
+            return False
 
 if __name__ == "__main__":
     # Test the RAG system

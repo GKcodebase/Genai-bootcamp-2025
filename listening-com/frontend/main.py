@@ -12,6 +12,7 @@ import re
 from backend.chat import BedrockChat
 from backend.structured_data import TranscriptStructurer  # Add this import at the top
 from backend.rag import RAGSystem
+from backend.interactive import InteractiveLearning  # Add this import
 
 # Page config
 st.set_page_config(
@@ -33,6 +34,8 @@ if 'rag_system' not in st.session_state:
     st.session_state.rag_system = RAGSystem()
 if 'video_id' not in st.session_state:
     st.session_state.video_id = None
+if 'interactive_learning' not in st.session_state:
+    st.session_state.interactive_learning = InteractiveLearning()
 
 def render_header():
     """Render the header section"""
@@ -422,31 +425,101 @@ def render_interactive_stage():
     """Render the interactive learning stage"""
     st.header("Interactive Learning")
     
-    # Practice type selection
-    practice_type = st.selectbox(
-        "Select Practice Type",
-        ["Dialogue Practice", "Vocabulary Quiz", "Listening Exercise"]
+    # Initialize interactive learning if not in session state
+    if 'interactive_learning' not in st.session_state:
+        st.session_state.interactive_learning = InteractiveLearning()
+    
+    # Section selector
+    section = st.selectbox(
+        "Select Section",
+        options=[2, 3],
+        format_func=lambda x: f"Section {x}"
     )
     
-    col1, col2 = st.columns([2, 1])
+    # Load questions button
+    if st.button("Load Questions"):
+        with st.spinner("Loading questions..."):
+            questions = st.session_state.interactive_learning.get_questions_by_section(section)
+            if questions:
+                st.session_state.current_questions = questions
+                st.session_state.current_question_idx = 0
+                st.success(f"Loaded {len(questions)} questions")
+            else:
+                st.error("No questions found for this section")
     
-    with col1:
-        st.subheader("Practice Scenario")
-        # Placeholder for scenario
-        st.info("Practice scenario will appear here")
+    # Display current question
+    if 'current_questions' in st.session_state and 'current_question_idx' in st.session_state:
+        question = st.session_state.current_questions[st.session_state.current_question_idx]
         
-        # Placeholder for multiple choice
-        options = ["Option 1", "Option 2", "Option 3", "Option 4"]
-        selected = st.radio("Choose your answer:", options)
-        
-    with col2:
-        st.subheader("Audio")
-        # Placeholder for audio player
-        st.info("Audio will appear here")
-        
-        st.subheader("Feedback")
-        # Placeholder for feedback
-        st.info("Feedback will appear here")
+        # Question display
+        with st.container():
+            if 'Introduction' in question:
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.subheader("Introduction")
+                    st.write(question['Introduction'])
+                with col2:
+                    if st.button("🔊 Play Introduction"):
+                        if question['audio'].get('Introduction'):
+                            st.audio(question['audio']['Introduction'], format='audio/mp3')
+                
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.subheader("Conversation")
+                    st.write(question['Conversation'])
+                with col2:
+                    if st.button("🔊 Play Conversation"):
+                        if question['audio'].get('Conversation'):
+                            st.audio(question['audio']['Conversation'], format='audio/mp3')
+            else:
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.subheader("Situation")
+                    st.write(question['Situation'])
+                with col2:
+                    if st.button("🔊 Play Situation"):
+                        if question['audio'].get('Situation'):
+                            st.audio(question['audio']['Situation'], format='audio/mp3')
+            
+            st.subheader("Question")
+            st.write(question['Question'])
+            
+            # Check if question has options
+            if 'Options' in question and question['Options']:
+                # Options as radio buttons
+                selected_answer = st.radio(
+                    "Select your answer:",
+                    options=range(1, len(question['Options']) + 1),
+                    format_func=lambda x: f"{x}. {question['Options'][x-1]}"
+                )
+                
+                # Check answer button
+                if st.button("Check Answer"):
+                    with st.spinner("Generating feedback..."):
+                        feedback = st.session_state.interactive_learning.generate_feedback(
+                            question, selected_answer
+                        )
+                        
+                        if feedback['correct']:
+                            st.success("Correct! 🎉")
+                        else:
+                            st.error("Not quite right. Try again!")
+                        
+                        st.info(feedback['explanation'])
+            else:
+                st.warning("This question doesn't have multiple choice options.")
+            
+            # Navigation buttons
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("Previous") and st.session_state.current_question_idx > 0:
+                    st.session_state.current_question_idx -= 1
+                    st.rerun()
+            
+            with col2:
+                if st.button("Next") and st.session_state.current_question_idx < len(st.session_state.current_questions) - 1:
+                    st.session_state.current_question_idx += 1
+                    st.rerun()
 
 def main():
     render_header()
