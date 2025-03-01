@@ -425,101 +425,142 @@ def render_interactive_stage():
     """Render the interactive learning stage"""
     st.header("Interactive Learning")
     
-    # Initialize interactive learning if not in session state
+    # Initialize states
     if 'interactive_learning' not in st.session_state:
         st.session_state.interactive_learning = InteractiveLearning()
+    if 'generated_question' not in st.session_state:
+        st.session_state.generated_question = None
+    if 'feedback' not in st.session_state:
+        st.session_state.feedback = None
+    if 'answer_submitted' not in st.session_state:
+        st.session_state.answer_submitted = False
     
-    # Section selector
-    section = st.selectbox(
-        "Select Section",
-        options=[2, 3],
-        format_func=lambda x: f"Section {x}"
-    )
+    st.subheader("Generate Questions")
     
-    # Load questions button
-    if st.button("Load Questions"):
-        with st.spinner("Loading questions..."):
-            questions = st.session_state.interactive_learning.get_questions_by_section(section)
-            if questions:
-                st.session_state.current_questions = questions
-                st.session_state.current_question_idx = 0
-                st.success(f"Loaded {len(questions)} questions")
-            else:
-                st.error("No questions found for this section")
+    # Topic input and section selection
+    col1, col2 = st.columns([2, 1])
     
-    # Display current question
-    if 'current_questions' in st.session_state and 'current_question_idx' in st.session_state:
-        question = st.session_state.current_questions[st.session_state.current_question_idx]
-        
-        # Question display
-        with st.container():
-            if 'Introduction' in question:
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.subheader("Introduction")
-                    st.write(question['Introduction'])
-                with col2:
-                    if st.button("🔊 Play Introduction"):
-                        if question['audio'].get('Introduction'):
-                            st.audio(question['audio']['Introduction'], format='audio/mp3')
-                
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.subheader("Conversation")
-                    st.write(question['Conversation'])
-                with col2:
-                    if st.button("🔊 Play Conversation"):
-                        if question['audio'].get('Conversation'):
-                            st.audio(question['audio']['Conversation'], format='audio/mp3')
-            else:
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.subheader("Situation")
-                    st.write(question['Situation'])
-                with col2:
-                    if st.button("🔊 Play Situation"):
-                        if question['audio'].get('Situation'):
-                            st.audio(question['audio']['Situation'], format='audio/mp3')
-            
-            st.subheader("Question")
-            st.write(question['Question'])
-            
-            # Check if question has options
-            if 'Options' in question and question['Options']:
-                # Options as radio buttons
-                selected_answer = st.radio(
-                    "Select your answer:",
-                    options=range(1, len(question['Options']) + 1),
-                    format_func=lambda x: f"{x}. {question['Options'][x-1]}"
+    with col1:
+        topic = st.text_input(
+            "Enter Topic",
+            placeholder="e.g., shopping, restaurant, school, weather",
+            key="generate_topic"
+        )
+    
+    with col2:
+        gen_section = st.selectbox(
+            "Section",
+            options=[2, 3],
+            format_func=lambda x: f"Section {x}",
+            key="generate_section"
+        )
+    
+    # Generate button
+    if st.button("Generate Question", type="primary"):
+        if not topic:
+            st.warning("Please enter a topic first")
+        else:
+            with st.spinner("Generating question..."):
+                new_question = st.session_state.interactive_learning.generate_similar_question(
+                    gen_section, topic
                 )
-                
-                # Check answer button
-                if st.button("Check Answer"):
-                    with st.spinner("Generating feedback..."):
-                        feedback = st.session_state.interactive_learning.generate_feedback(
-                            question, selected_answer
-                        )
-                        
-                        if feedback['correct']:
-                            st.success("Correct! 🎉")
-                        else:
-                            st.error("Not quite right. Try again!")
-                        
-                        st.info(feedback['explanation'])
+                if new_question:
+                    st.write("Generated question:", new_question)  # Debug print
+                    st.session_state.generated_question = new_question
+                    st.session_state.feedback = None
+                    st.session_state.answer_submitted = False
+                    st.success("Question generated successfully!")
+                else:
+                    st.error("Failed to generate question. Please try again.")
+    
+    # Display generated question and answer options
+    if st.session_state.generated_question:
+        with st.container():
+            st.markdown("### Question")
+            
+            # Display question content
+            if 'Introduction' in st.session_state.generated_question:
+                st.write("**Introduction:**")
+                st.write(st.session_state.generated_question['Introduction'])
+                st.write("**Conversation:**")
+                st.write(st.session_state.generated_question['Conversation'])
             else:
-                st.warning("This question doesn't have multiple choice options.")
+                st.write("**Situation:**")
+                st.write(st.session_state.generated_question['Situation'])
             
-            # Navigation buttons
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("Previous") and st.session_state.current_question_idx > 0:
-                    st.session_state.current_question_idx -= 1
-                    st.rerun()
+            st.write("**Question:**")
+            st.write(st.session_state.generated_question['Question'])
             
-            with col2:
-                if st.button("Next") and st.session_state.current_question_idx < len(st.session_state.current_questions) - 1:
-                    st.session_state.current_question_idx += 1
-                    st.rerun()
+            # Replace the radio button and feedback section with this updated code
+            if 'Options' in st.session_state.generated_question:
+                options = st.session_state.generated_question['Options']
+                if len(options) == 4:  # Ensure we have exactly 4 options
+                    st.write("**選択肢 (Options):**")
+                    selected_answer = st.radio(
+                        "",
+                        options=range(1, 5),
+                        format_func=lambda x: f"{x}. {options[x-1]}",
+                        key="answer_selection",
+                        disabled=st.session_state.answer_submitted,
+                        horizontal=False,
+                        label_visibility="collapsed"
+                    )
+                    
+                    # Add Submit Answer button
+                    if not st.session_state.answer_submitted:
+                        if st.button("Submit Answer", type="primary"):
+                            with st.spinner("Checking answer..."):
+                                # Get correct answer directly from the generated question
+                                correct_answer = st.session_state.generated_question.get('correct_answer')
+                                
+                                if correct_answer is not None:
+                                    is_correct = int(selected_answer) == int(correct_answer)
+                                    feedback = {
+                                        'correct': is_correct,
+                                        'correct_answer': correct_answer,
+                                        'explanation': f"{'正解です！' if is_correct else '不正解です。'} The correct answer is option {correct_answer}: {options[correct_answer-1]}"
+                                    }
+                                    st.session_state.feedback = feedback
+                                    st.session_state.answer_submitted = True
+                                    st.rerun()
+                                else:
+                                    st.error("Could not find correct answer in the question")
+                    
+                    # Display feedback section
+                    if st.session_state.answer_submitted and st.session_state.feedback:
+                        feedback_container = st.container()
+                        with feedback_container:
+                            if st.session_state.feedback['correct']:
+                                st.success(f"✅ Correct! You selected option {selected_answer}")
+                            else:
+                                correct_answer = st.session_state.feedback['correct_answer']
+                                st.error(
+                                    f"❌ Incorrect! You selected option {selected_answer}.\n\n"
+                                    f"The correct answer is option {correct_answer}: {options[correct_answer-1]}"
+                                )
+                            
+                            st.markdown("### Explanation")
+                            st.write(st.session_state.feedback['explanation'])
+                        
+                        # Show next question button
+                        if st.button("Generate New Question", type="primary"):
+                            st.session_state.generated_question = None
+                            st.session_state.feedback = None
+                            st.session_state.answer_submitted = False
+                            st.rerun()
+
+    # Example topics
+    with st.expander("Example Topics"):
+        st.markdown("""
+        Try these topics:
+        - Shopping (買い物)
+        - Restaurant (レストラン)
+        - School (学校)
+        - Weather (天気)
+        - Travel (旅行)
+        - Work (仕事)
+        - Hobbies (趣味)
+        """)
 
 def main():
     render_header()
