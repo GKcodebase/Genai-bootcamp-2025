@@ -33,11 +33,23 @@ class InteractiveLearning:
         self.bedrock_client = boto3.client('bedrock-runtime', **aws_config)
         self.polly_client = boto3.client('polly', **aws_config)
         
-        # Configure Polly voice settings
-        self.voice_config = {
-            'VoiceId': 'Mizuki',  # Japanese voice
-            'Engine': 'standard',  # Use standard engine instead of neural
-            'LanguageCode': 'ja-JP'
+        # Configure available voices
+        self.voice_configs = {
+            'female': {
+                'VoiceId': 'Mizuki',
+                'Engine': 'standard',
+                'LanguageCode': 'ja-JP'
+            },
+            'male': {
+                'VoiceId': 'Takumi',
+                'Engine': 'standard',
+                'LanguageCode': 'ja-JP'
+            },
+            'neural_female': {
+                'VoiceId': 'Kazuha',
+                'Engine': 'neural',
+                'LanguageCode': 'ja-JP'
+            }
         }
         
     def get_questions_by_section(self, section_num: int) -> List[Dict]:
@@ -201,13 +213,59 @@ class InteractiveLearning:
         prompt += f"\n\nSelected answer: {selected_answer}"
         return prompt
 
-    def generate_audio(self, text: str) -> Optional[bytes]:
-        """Generate audio using Amazon Polly"""
+    def generate_audio_for_question(self, question: Dict) -> Dict[str, Dict[str, bytes]]:
+        """Generate audio for all parts of the question with different voices"""
+        audio_data = {}
+        
+        try:
+            # Generate audio for situation/introduction with female voice
+            if 'Introduction' in question:
+                audio_data['Introduction'] = {
+                    'audio': self.generate_audio(question['Introduction'], 'female'),
+                    'voice': 'female'
+                }
+                # Generate conversation with alternating voices
+                conversation_parts = question['Conversation'].split('\n')
+                conversation_audio = []
+                for i, part in enumerate(conversation_parts):
+                    voice = 'male' if i % 2 == 0 else 'female'
+                    audio = self.generate_audio(part, voice)
+                    if audio:
+                        conversation_audio.append({'audio': audio, 'voice': voice})
+                audio_data['Conversation'] = conversation_audio
+            else:
+                audio_data['Situation'] = {
+                    'audio': self.generate_audio(question['Situation'], 'neural_female'),
+                    'voice': 'neural_female'
+                }
+            
+            # Generate question and options audio
+            audio_data['Question'] = {
+                'audio': self.generate_audio(question['Question'], 'female'),
+                'voice': 'female'
+            }
+            
+            # Generate audio for options
+            options_audio = []
+            for opt in question['Options']:
+                audio = self.generate_audio(opt, 'male')
+                if audio:
+                    options_audio.append({'audio': audio, 'voice': 'male'})
+            audio_data['Options'] = options_audio
+            
+            return audio_data
+            
+        except Exception as e:
+            print(f"Error generating audio: {str(e)}")
+            return {}
+
+    def generate_audio(self, text: str, voice_type: str = 'female') -> Optional[bytes]:
+        """Generate audio using Amazon Polly with specified voice"""
         if not text or not text.strip():
             return None
             
         try:
-            # Add SSML pauses for better speech rhythm
+            voice_config = self.voice_configs.get(voice_type, self.voice_configs['female'])
             ssml_text = f"""<speak>
                 <prosody rate="slow">
                     {text}
@@ -218,7 +276,7 @@ class InteractiveLearning:
                 Text=ssml_text,
                 TextType='ssml',
                 OutputFormat='mp3',
-                **self.voice_config
+                **voice_config
             )
             
             if "AudioStream" in response:

@@ -478,18 +478,59 @@ def render_interactive_stage():
         with st.container():
             st.markdown("### Question")
             
-            # Display question content
-            if 'Introduction' in st.session_state.generated_question:
-                st.write("**Introduction:**")
-                st.write(st.session_state.generated_question['Introduction'])
-                st.write("**Conversation:**")
-                st.write(st.session_state.generated_question['Conversation'])
-            else:
-                st.write("**Situation:**")
-                st.write(st.session_state.generated_question['Situation'])
+            # Generate audio for the question if not already generated
+            if 'audio_data' not in st.session_state:
+                with st.spinner("Generating audio..."):
+                    st.session_state.audio_data = st.session_state.interactive_learning.generate_audio_for_question(
+                        st.session_state.generated_question
+                    )
             
-            st.write("**Question:**")
-            st.write(st.session_state.generated_question['Question'])
+            # Display question content with audio controls
+            if 'Introduction' in st.session_state.generated_question:
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.write("**Introduction:**")
+                    st.write(st.session_state.generated_question['Introduction'])
+                with col2:
+                    if 'Introduction' in st.session_state.audio_data:
+                        st.audio(st.session_state.audio_data['Introduction']['audio'])
+                
+                st.write("**Conversation:**")
+                conversation_parts = st.session_state.generated_question['Conversation'].split('\n')
+                for i, (part, audio) in enumerate(zip(conversation_parts, st.session_state.audio_data.get('Conversation', []))):
+                    col1, col2 = st.columns([3, 1])
+                    with col1:
+                        st.write(part)
+                    with col2:
+                        st.audio(audio['audio'])
+            else:
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.write("**Situation:**")
+                    st.write(st.session_state.generated_question['Situation'])
+                with col2:
+                    if 'Situation' in st.session_state.audio_data:
+                        st.audio(st.session_state.audio_data['Situation']['audio'])
+            
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.write("**Question:**")
+                st.write(st.session_state.generated_question['Question'])
+            with col2:
+                if 'Question' in st.session_state.audio_data:
+                    st.audio(st.session_state.audio_data['Question']['audio'])
+            
+            # Display options with audio
+            st.write("**選択肢 (Options):**")
+            options = st.session_state.generated_question['Options']
+            options_audio = st.session_state.audio_data.get('Options', [])
+            
+            for i, (opt, audio) in enumerate(zip(options, options_audio), 1):
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.write(f"{i}. {opt}")
+                with col2:
+                    st.audio(audio['audio'])
             
             # Replace the radio button and feedback section with this updated code
             if 'Options' in st.session_state.generated_question:
@@ -547,6 +588,8 @@ def render_interactive_stage():
                             st.session_state.generated_question = None
                             st.session_state.feedback = None
                             st.session_state.answer_submitted = False
+                            if 'audio_data' in st.session_state:
+                                del st.session_state.audio_data
                             st.rerun()
 
     # Example topics
