@@ -1,0 +1,6 @@
+gradio>=4.0.0
+requests>=2.31.0
+manga-ocr>=0.1.8
+python-dotenv>=1.0.0
+PyYAML>=6.0.1
+groq>=0.1.0
