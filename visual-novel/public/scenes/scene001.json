@@ -36,6 +36,14 @@
       "languageVersion": "フライトはどうでしたか？"
     },
     {
+      "character": {
+        "id": "alex",
+        "emotion": "neutral"
+      },
+      "text": "I hope you'll enjoy your stay here.",
+      "languageVersion": "ここでの滞在を楽しんでください。"
+    },
+    {
       "speaker": "alex",
       "text": "Oh, you're up! Good morning!",
       "languageVersion": "おはよう！起きた？",

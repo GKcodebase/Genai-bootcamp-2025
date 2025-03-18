@@ -4,27 +4,20 @@ import AudioManager from '../systems/AudioManager';
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super('GameScene');
-    }
-
-    init(data) {
-        console.log('GameScene: Initializing');
-        this.currentScene = data.sceneId;
         this.currentDialog = 0;
     }
 
+    init(data) {
+        console.log('GameScene: Initializing with data:', data);
+        this.currentScene = data.sceneId || 'scene001';
+    }
+
     async create() {
-        console.log('GameScene: Creating');
-        console.log('Audio cache:', this.cache.audio.entries);
-
-        // Wait for audio to be available
-        if (!this.cache.audio.exists('bgMusic')) {
-            console.warn('Audio not loaded, waiting...');
-            this.time.delayedCall(100, () => this.create());
-            return;
-        }
-
+        console.log('GameScene: Creating scene');
+        
         // Load scene data first
         await this.loadSceneData();
+        console.log('Scene data loaded:', this.sceneData);
         
         // Create game elements
         this.createBackground();
@@ -33,24 +26,31 @@ export default class GameScene extends Phaser.Scene {
         // Launch UI scene
         this.scene.launch('UIScene');
         
-        // Start dialog
-        this.showCurrentDialog();
-
-        // Initialize audio after confirming assets are loaded
-        this.audioManager = new AudioManager(this);
-        this.audioManager.playBackgroundMusic();
-
-        // Add click handler for next dialog with sound
-        this.input.on('pointerdown', () => {
-            this.audioManager.playClickSound();
+        // Listen for dialog progression
+        this.scene.get('UIScene').events.on('dialogNext', () => {
             this.nextDialog();
         });
+
+        // Show first dialog
+        this.showCurrentDialog();
+
+        // Initialize audio after scene is ready
+        this.time.delayedCall(100, () => {
+            this.initializeAudio();
+        });
+
+        // Listen for choice events
+        this.events.on('dialogChoice', this.handleDialogChoice, this);
     }
 
     async loadSceneData() {
         try {
-            const response = await fetch(`/scenes/${this.currentScene}.json`);
+            const response = await fetch(`scenes/${this.currentScene}.json`);
+            if (!response.ok) {
+                throw new Error(`Failed to load scene: ${this.currentScene}`);
+            }
             this.sceneData = await response.json();
+            console.log('Loaded scene data:', this.sceneData);
         } catch (error) {
             console.error('Error loading scene data:', error);
         }
@@ -69,19 +69,53 @@ export default class GameScene extends Phaser.Scene {
     }
 
     showCurrentDialog() {
-        if (this.sceneData.dialog && this.sceneData.dialog[this.currentDialog]) {
-            const dialogData = this.sceneData.dialog[this.currentDialog];
-            this.scene.get('UIScene').events.emit('updateDialog', dialogData);
+        if (!this.sceneData?.dialog?.[this.currentDialog]) return;
+
+        const dialogData = this.sceneData.dialog[this.currentDialog];
+        console.log('Emitting dialog:', dialogData);
+
+        // Ensure UIScene exists and is active
+        if (!this.scene.isActive('UIScene')) {
+            this.scene.launch('UIScene');
         }
+
+        // Emit dialog update event
+        this.scene.get('UIScene').events.emit('updateDialog', {
+            speaker: dialogData.speaker,
+            text: dialogData.text,
+            languageVersion: dialogData.languageVersion,
+            options: dialogData.options
+        });
     }
 
     nextDialog() {
+        console.log('Moving to next dialog');
         this.currentDialog++;
-        if (this.sceneData.dialog && this.currentDialog < this.sceneData.dialog.length) {
+        if (this.sceneData && this.sceneData.dialog && this.currentDialog < this.sceneData.dialog.length) {
             this.showCurrentDialog();
+            if (this.audioManager) {
+                this.audioManager.playClickSound();
+            }
         } else {
-            // Play transition sound when dialog ends
-            this.audioManager.playTransitionSound();
+            console.log('Reached end of dialog');
+            if (this.audioManager) {
+                this.audioManager.playTransitionSound();
+            }
         }
+    }
+
+    initializeAudio() {
+        try {
+            this.audioManager = new AudioManager(this);
+            this.audioManager.playMusic();
+        } catch (error) {
+            console.error('Failed to initialize audio:', error);
+        }
+    }
+
+    handleDialogChoice(data) {
+        console.log('Choice selected:', data);
+        // Handle choice consequences here
+        this.nextDialog();
     }
 }

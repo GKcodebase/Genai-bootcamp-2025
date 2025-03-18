@@ -1,63 +1,78 @@
 export default class AudioManager {
     constructor(scene) {
         this.scene = scene;
-        this.bgMusic = null;
-        this.clickSound = null;
-        this.transitionSound = null;
-        this.initialize();
+        this.setupAudio();
     }
 
-    initialize() {
-        // Check if audio exists in cache before creating
-        if (this.scene.cache.audio.exists('bgMusic')) {
-            this.bgMusic = this.scene.sound.add('bgMusic', { 
-                loop: true, 
-                volume: 0.5 
-            });
-            console.log('Background music initialized');
-        } else {
-            console.warn('Background music not found in cache');
-        }
+    setupAudio() {
+        try {
+            // Background music
+            if (this.scene.cache.audio.exists('bgMusic')) {
+                this.bgMusic = this.scene.sound.add('bgMusic', {
+                    loop: true,
+                    volume: 0.5
+                });
+            }
 
-        if (this.scene.cache.audio.exists('clickSound')) {
-            this.clickSound = this.scene.sound.add('clickSound', { 
-                loop: false, 
-                volume: 0.3 
-            });
-        }
+            // Click sound
+            if (this.scene.cache.audio.exists('clickSound')) {
+                this.clickSound = this.scene.sound.add('clickSound', {
+                    loop: false,
+                    volume: 0.3
+                });
+            }
 
-        if (this.scene.cache.audio.exists('transitionSound')) {
-            this.transitionSound = this.scene.sound.add('transitionSound', { 
-                loop: false, 
-                volume: 0.4 
-            });
+            // Transition sound
+            if (this.scene.cache.audio.exists('transitionSound')) {
+                this.transitionSound = this.scene.sound.add('transitionSound', {
+                    loop: false,
+                    volume: 0.4
+                });
+            }
+        } catch (error) {
+            console.error('Error setting up audio:', error);
         }
     }
 
-    playBackgroundMusic() {
+    playMusic() {
         if (this.bgMusic && !this.bgMusic.isPlaying) {
-            console.log('Attempting to play background music');
-            this.bgMusic.play();
-        } else {
-            console.warn('Background music not initialized or already playing');
+            try {
+                this.bgMusic.play();
+            } catch (error) {
+                console.error('Error playing background music:', error);
+            }
         }
     }
 
     playClickSound() {
         if (this.clickSound) {
-            this.clickSound.play();
+            try {
+                this.clickSound.play();
+            } catch (error) {
+                console.error('Error playing click sound:', error);
+            }
         }
     }
 
     playTransitionSound() {
         if (this.transitionSound) {
-            this.transitionSound.play();
+            try {
+                this.transitionSound.play();
+            } catch (error) {
+                console.error('Error playing transition sound:', error);
+            }
         }
     }
 
     stopAll() {
-        if (this.bgMusic) this.bgMusic.stop();
-        if (this.clickSound) this.clickSound.stop();
-        if (this.transitionSound) this.transitionSound.stop();
+        if (this.bgMusic && this.bgMusic.isPlaying) {
+            this.bgMusic.stop();
+        }
+        if (this.clickSound && this.clickSound.isPlaying) {
+            this.clickSound.stop();
+        }
+        if (this.transitionSound && this.transitionSound.isPlaying) {
+            this.transitionSound.stop();
+        }
     }
 }

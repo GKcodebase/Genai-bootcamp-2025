@@ -1,57 +1,44 @@
 import DialogBox from '../components/DialogBox';
-import ChoiceMenu from '../components/ChoiceMenu';
 
 export default class UIScene extends Phaser.Scene {
     constructor() {
         super('UIScene');
     }
 
-    create(data) {
+    create() {
         console.log('UIScene: Creating dialog box');
-        // Create single dialog box
-        this.createDialogBox();
         
-        // Listen for dialog updates
-        this.events.on('updateDialog', this.updateDialog, this);
-        // this.dialogBox = new DialogBox(this, 640, 550);
-        // this.choiceMenu = new ChoiceMenu(this, 640, 400);
+        // Create dialog box at the bottom center of the screen
+        this.dialogBox = new DialogBox(this, 640, 580);
         
-        this.events.on('dialog-start', this.showDialog, this);
-        this.events.on('show-choices', this.showChoices, this);
-    }
-
-    createDialogBox() {
-        // Create semi-transparent background
-        const graphics = this.add.graphics();
-        graphics.fillStyle(0x000000, 0.7);
-        graphics.fillRect(0, 520, 1280, 200);
-
-        // Create text elements
-        this.dialogText = this.add.text(40, 540, '', {
-            fontSize: '24px',
-            fill: '#ffffff',
-            wordWrap: { width: 1200 }
+        // Make dialog box accessible globally for debugging
+        if (window.game) {
+            window.game.debugDialog = this.dialogBox;
+        }
+        
+        // Listen for dialog updates from GameScene
+        this.events.on('updateDialog', (dialogData) => {
+            console.log('UIScene: Received dialog update:', dialogData);
+            if (this.dialogBox && dialogData) {
+                // Clear any test dialog first
+                this.dialogBox.clear();
+                // Show the actual game dialog
+                this.dialogBox.showDialog(dialogData);
+            }
         });
 
-        this.japaneseText = this.add.text(40, 580, '', {
-            fontSize: '24px',
-            fill: '#ffffff',
-            wordWrap: { width: 1200 }
+        // Debug text with better instructions
+        // this.debugText = this.add.text(10, 10, 
+        //     'Debug: Open console (F12) and type debugGame.inspectDialog() to check dialog state', {
+        //     fontSize: '16px',
+        //     fill: '#ffffff'
+        // });
+
+        // Test dialog to verify box positioning
+        this.dialogBox.showDialog({
+            speaker: 'System',
+            text: 'Welcome to Alex Journey to Japan.',
+            languageVersion: 'システム初期化完了'
         });
-    }
-
-    updateDialog(dialogData) {
-        if (!dialogData) return;
-        console.log('UIScene: Updating dialog with:', dialogData);
-        this.dialogText.setText(dialogData.text || '');
-        this.japaneseText.setText(dialogData.languageVersion || '');
-    }
-
-    showDialog(dialogData) {
-        this.dialogBox.showDialog(dialogData);
-    }
-
-    showChoices(choices) {
-        this.choiceMenu.showChoices(choices);
     }
 }
