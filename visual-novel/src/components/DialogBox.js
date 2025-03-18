@@ -12,7 +12,7 @@ export default class DialogBox {
         this.createNextButton();
         
         // Initialize typing effect
-        this.typingSpeed = 30;
+        this.typingSpeed = parseInt(localStorage.getItem('textSpeed')) || 30;
         this.isTyping = false;
         this.textToType = '';
         this.japaneseTextToType = '';

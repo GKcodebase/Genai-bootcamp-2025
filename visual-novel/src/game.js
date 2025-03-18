@@ -4,6 +4,8 @@ import MainMenuScene from './scenes/MainMenuScene';
 import GameScene from './scenes/GameScene';
 import UIScene from './scenes/UIScene';
 import AssetLoader from './AssetLoader';
+import SettingsScene from './scenes/SettingsScene';
+import LoadingScene from './scenes/LoadingScene';
 
 const config = {
     type: Phaser.AUTO,
@@ -15,7 +17,7 @@ const config = {
         width: 1280,
         height: 720
     },
-    scene: [BootScene,AssetLoader, MainMenuScene, GameScene, UIScene],
+    scene: [BootScene, LoadingScene, MainMenuScene, GameScene, UIScene, SettingsScene ,AssetLoader],
     audio: {
         disableWebAudio: false
     }

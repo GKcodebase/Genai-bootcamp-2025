@@ -75,4 +75,19 @@ export default class AudioManager {
             this.transitionSound.stop();
         }
     }
+
+    setMusicVolume(volume) {
+        if (this.bgMusic) {
+            this.bgMusic.setVolume(volume);
+        }
+    }
+
+    setSoundVolume(volume) {
+        if (this.clickSound) {
+            this.clickSound.setVolume(volume);
+        }
+        if (this.transitionSound) {
+            this.transitionSound.setVolume(volume);
+        }
+    }
 }
