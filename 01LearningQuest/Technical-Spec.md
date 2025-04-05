@@ -61,10 +61,17 @@ ar-language-app/
 │   ├── requirements.txt      # Python dependencies
 │   └── Dockerfile            # Docker configuration for backend
 ├── frontend/
-│   ├── web_app/              # Web UI (Flutter Web)
-│   │   ├── lib/              # Flutter Dart files
+│   ├── vue_app/              # Web UI (Vue.js)
+│   │   ├── src/              # Vue.js source files
+│   │   │   ├── components/   # Vue components
+│   │   │   │   ├── LandingPage.vue
+│   │   │   │   ├── PostScanScreen.vue
+│   │   │   │   └── PracticeScreen.vue
+│   │   │   ├── App.vue       # Root Vue component
+│   │   │   └── main.js       # Vue entry point
 │   │   ├── public/           # Static assets (e.g., HTML, icons)
-│   │   └── pubspec.yaml      # Flutter dependencies
+│   │   ├── package.json      # Vue.js dependencies
+│   │   └── vite.config.js    # Vite configuration for development
 │   └── Dockerfile            # Docker configuration for frontend
 ├── docker-compose.yml        # Orchestrates backend and frontend containers
 └── README.md                 # Setup and run instructions
