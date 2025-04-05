@@ -159,3 +159,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 lang-portal/backend-fastapi/alembic/versions/*
+/01LearningQuest/ar-language-app/frontend/vue_app/node_modules
+01LearningQuest/ar-language-app/frontend/vue_app/package-lock.json
