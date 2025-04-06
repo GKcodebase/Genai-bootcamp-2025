@@ -1,53 +1,74 @@
 <template>
   <div class="landing-page">
-    <h1>Welcome to the AR Language Learning App</h1>
+    <!-- Rest of your existing template -->
     
-    <!-- Scanning options -->
-    <div class="scan-options">
-      <button @click="startCamera" class="scan-button">Use Camera</button>
-      <button @click="startFileUpload" class="scan-button">Upload Image</button>
-    </div>
-
-    <!-- Camera view -->
-    <div v-if="showCamera" class="camera-container">
-      <video ref="video" autoplay playsinline class="camera-view"></video>
-      <button @click="captureImage" class="capture-button">Capture</button>
-      <button @click="closeCamera" class="close-button">Close Camera</button>
-    </div>
-
-    <!-- Results view -->
-    <div v-if="scanResult" class="result-container">
-      <h2>Scan Result:</h2>
-      <div class="result-card">
-        <img :src="capturedImage" alt="Scanned object" class="preview-image"/>
-        <p class="object-name">English: {{ scanResult.name }}</p>
-        <p class="translation">Malayalam: {{ scanResult.malayalam_translation }}</p>
-        <div class="action-buttons">
-          <button @click="startPractice" class="practice-button">Practice</button>
-          <button @click="resetScan" class="reset-button">New Scan</button>
-        </div>
+    <!-- Update AR Overlay position -->
+    <div class="camera-section">
+      <AROverlay
+        v-if="showAR"
+        @exit-ar="handleARExit"
+        @object-detected="handleObjectDetected"
+      />
+      
+      <!-- Your existing camera view -->
+      <div v-if="showCamera" class="camera-container">
+        <video ref="video" autoplay playsinline class="camera-view"></video>
+        <button @click="captureImage" class="capture-button">Capture</button>
+        <button @click="closeCamera" class="close-button">Close Camera</button>
       </div>
     </div>
+    
+    <!-- Rest of your existing template -->
+    <div v-show="!showAR" class="main-content">
+      <h1>Welcome to the AR Language Learning App</h1>
+      
+      <!-- Scan Options -->
+      <div class="scan-options">
+        <button @click="startAR" class="scan-button ar">
+          Start AR Scan
+        </button>
+        <button @click="startCamera" class="scan-button">Use Camera</button>
+        <button @click="startFileUpload" class="scan-button">
+          Upload Image
+        </button>
+      </div>
 
-    <!-- History Section -->
-    <div class="history-section">
-      <h2>Scan History</h2>
-      <div v-if="scanHistory && scanHistory.length > 0" class="history-list">
-        <div v-for="item in scanHistory" :key="item.id || item.object_id" class="history-item">
-          <div class="history-content">
-            <p><strong>Object:</strong> {{ item.name || item.object_name }}</p>
-            <p><strong>Translation:</strong> {{ item.malayalam_translation }}</p>
-            <p class="timestamp">{{ new Date(item.timestamp).toLocaleString() }}</p>
+      <!-- Results view -->
+      <div v-if="scanResult" class="result-container">
+        <h2>Scan Result:</h2>
+        <div class="result-card">
+          <img :src="capturedImage" alt="Scanned object" class="preview-image"/>
+          <p class="object-name">English: {{ scanResult.name }}</p>
+          <p class="translation">Malayalam: {{ scanResult.malayalam_translation }}</p>
+          <div class="action-buttons">
+            <button @click="startPractice" class="practice-button">Practice</button>
+            <button @click="resetScan" class="reset-button">New Scan</button>
           </div>
-          <button @click="startPracticeFromHistory(item)" class="practice-button">Practice</button>
         </div>
       </div>
-      <p v-else>No scan history available</p>
+  
+      <!-- History Section -->
+      <div class="history-section">
+        <h2>Scan History</h2>
+        <div v-if="scanHistory && scanHistory.length > 0" class="history-list">
+          <div v-for="item in scanHistory" :key="item.id || item.object_id" class="history-item">
+            <div class="history-content">
+              <p><strong>Object:</strong> {{ item.name || item.object_name }}</p>
+              <p><strong>Translation:</strong> {{ item.malayalam_translation }}</p>
+              <p class="timestamp">{{ new Date(item.timestamp).toLocaleString() }}</p>
+            </div>
+            <button @click="startPracticeFromHistory(item)" class="practice-button">Practice</button>
+          </div>
+        </div>
+        <p v-else>No scan history available</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import AROverlay from './AROverlay.vue'
+
 const DEBUG = true; // Enable/disable debug logging
 
 function log(...args) {
@@ -58,13 +79,17 @@ function log(...args) {
 
 export default {
   name: 'LandingPage',
+  components: {
+    AROverlay
+  },
   data() {
     return {
       showCamera: false,
       stream: null,
       scanResult: null,
       capturedImage: null,
-      scanHistory: []
+      scanHistory: [],
+      showAR: false
     }
   },
   
@@ -238,6 +263,41 @@ export default {
           malayalam_translation: item.malayalam_translation
         }
       });
+    },
+
+    // Add new AR methods
+    async startAR() {
+      try {
+        // Check for AR and camera support
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('AR requires camera access');
+        }
+        
+        // Request camera permissions
+        await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: 'environment'
+          } 
+        });
+        
+        this.showAR = true;
+        
+      } catch (error) {
+        console.error('AR initialization error:', error);
+        alert('Could not start AR. Please check camera permissions.');
+      }
+    },
+    
+    handleARExit() {
+      this.showAR = false;
+      this.scanResult = null;
+      this.loadHistory(); // Refresh history after AR session
+    },
+
+    handleObjectDetected(result) {
+      this.scanResult = result;
+      this.showAR = false; // Exit AR after successful detection
+      this.loadHistory(); // Refresh history
     }
   }
 }
@@ -266,6 +326,14 @@ export default {
 
 .scan-button:hover {
   background-color: #45a049;
+}
+
+.scan-button.ar {
+  background-color: #2196F3;
+}
+
+.scan-button.ar:hover {
+  background-color: #1976D2;
 }
 
 .camera-container {
@@ -377,4 +445,13 @@ export default {
 .practice-button {
   min-width: 100px;
 }
+
+/* Add to your existing styles */
+.camera-section {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+/* ... rest of your existing styles ... */
 </style>
