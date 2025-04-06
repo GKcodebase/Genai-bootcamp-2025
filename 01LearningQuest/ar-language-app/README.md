@@ -14,22 +14,22 @@ An augmented reality application that helps users learn Malayalam through real-w
 ## Screenshots
 
 - Landing page with AR scanner/ camera capture and Image upload
-    ![alt text](<Screenshot 2025-04-06 at 3.34.54 PM.png>)
+    ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.34.54 PM.png>)
 - Object detection with Malayalam overlay
-    ![alt text](<Screenshot 2025-04-06 at 3.36.40 PM.png>)
+    ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.36.40 PM.png>)
 - Object detection with camera/Photo
-    ![alt text](<Screenshot 2025-04-06 at 3.37.38 PM.png>)
+    ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.37.38 PM.png>)
 - Image upload.
-    ![alt text](<Screenshot 2025-04-06 at 3.37.51 PM.png>)
+    ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.37.51 PM.png>)
 - Practice screen
     - Writing practice: Write the translation of detected word
-        ![alt text](<Screenshot 2025-04-06 at 3.38.06 PM.png>)
+        ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.38.06 PM.png>)
     - Speaking Practice: practice prounciation
-        ![alt text](<Screenshot 2025-04-06 at 3.40.50 PM.png>)
+        ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.40.50 PM.png>)
     - Listeniing Practice: Listen to a phrase and type the word
-        ![alt text](<Screenshot 2025-04-06 at 3.41.10 PM.png>)
+        ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.41.10 PM.png>)
 - History view: See the historic practice and retry learning.
-    ![alt text](<Screenshot 2025-04-06 at 3.50.04 PM.png>)
+    ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.50.04 PM.png>)
 
 ## Tech Stack
 
