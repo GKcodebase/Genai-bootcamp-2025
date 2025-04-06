@@ -8,7 +8,20 @@ A comprehensive collection of projects developed during the Generative AI Bootca
 
 ## 🚀 Featured Projects
 
-### 1. Japanese Visual Novel
+### 1. AR Language Learning App (Malayalam)
+Interactive AR-based language learning application for Malayalam
+- Real-time object detection using camera
+- Malayalam translation with AR overlay
+- Interactive practice exercises
+  - Writing practice
+  - Speaking practice with pronunciation verification
+  - Listening comprehension
+- Audio generation for pronunciations
+- Speech verification system
+- History tracking and progress monitoring
+- Technologies: AR.js, Vue.js, FastAPI, Google Gemini, Whisper, gTTS
+
+### 2. Japanese Visual Novel
 An interactive visual novel for learning Japanese using Phaser.js
 - Interactive storytelling with branching narratives
 - Japanese language learning integration
@@ -17,7 +30,7 @@ An interactive visual novel for learning Japanese using Phaser.js
 - Settings customization
 - phaser.js
 
-### 2. Language Learning Portal
+### 3. Language Learning Portal
 Multi-backend implementation (FastAPI, Go, Flask) with React/Next.js frontend
 - Vocabulary management system
 - Study activity tracking
@@ -25,7 +38,7 @@ Multi-backend implementation (FastAPI, Go, Flask) with React/Next.js frontend
 - RESTful API implementations
 - Vector-based search capabilities
 
-### 3. Writing Practice App
+### 4. Writing Practice App
 Gradio-based application for Japanese writing practice
 - OCR integration for handwriting recognition
 - Automated grading system
@@ -33,7 +46,7 @@ Gradio-based application for Japanese writing practice
 - Progress tracking
 - Custom prompt generation
 
-### 4. Song Vocabulary App
+### 5. Song Vocabulary App
 Learn language through music using Streamlit
 - Song lyrics analysis
 - Vocabulary extraction
@@ -42,14 +55,14 @@ Learn language through music using Streamlit
 - Customizable difficulty levels
 - Agentic AI
 
-### 5. OPEA (Open platform for enterprise AI)
+### 6. OPEA (Open platform for enterprise AI)
 OPEA Sample implementation
 - DB QnA Implementation
 - Chat QnA - Terminal
 - Text to Speech and Voice cloning
 - Local Ollama models
 
-### 6. Listening Comprehension App
+### 7. Listening Comprehension App
 Audio-based language learning application
 - Custom audio content generation
 - Progress tracking
@@ -58,6 +71,9 @@ Audio-based language learning application
 ## 🛠️ Technologies Used
 
 ### Frontend
+- Vue.js
+- AR.js
+- A-Frame
 - React.js
 - Next.js
 - TypeScript
@@ -70,6 +86,9 @@ Audio-based language learning application
 
 ### Backend
 - FastAPI
+- Google Gemini API
+- Whisper
+- gTTS
 - Go/Gin
 - SQLite
 - SQLAlchemy
@@ -77,6 +96,9 @@ Audio-based language learning application
 - Flask
 
 ### AI/ML
+- Google Gemini
+- OpenAI Whisper
+- AR Object Detection
 - LangChain
 - Ollama
 - Groq
@@ -113,6 +135,11 @@ cd project-name
 
 ```
 free-genai-bootcamp-2025/
+├── 01LearningQuest/
+│   └── ar-language-app/     # AR Language Learning App
+│       ├── frontend/        # Vue.js + AR.js implementation
+│       ├── backend/         # FastAPI server
+│       └── services/        # AI services (Gemini, Whisper, gTTS)
 ├── visual-novel/              # Japanese learning game
 │   ├── public/               # Assets and static files
 │   └── src/                  # Source code
