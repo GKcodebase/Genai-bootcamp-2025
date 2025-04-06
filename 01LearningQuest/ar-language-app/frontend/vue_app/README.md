@@ -1,53 +1,108 @@
-# My Vue App
+# Interactive Malaylam Learning App - Frontend
 
-## Project Overview
-This is a Vue.js application created using Vite. It serves as a template for building modern web applications with Vue.js.
+Vue.js based frontend application for AR language learning.
+
+## Technologies Used
+
+- Vue.js 3.3.0
+- Vite 6.2.5
+- AR.js 3.4.5
+- A-Frame 1.4.2
+- Three.js 0.160.0
+- Vue Router 4.0.0
+
+## Features
+
+- Real-time AR camera integration
+- Object detection interface
+- Interactive practice exercises
+- History tracking
+- Audio playback and recording
+- Responsive design
 
 ## Project Structure
+
 ```
-my-vue-app
-├── src
-│   ├── assets
-│   │   └── styles.css       # CSS styles for the application
-│   ├── components
-│   │   └── HelloWorld.vue   # A Vue component that displays a greeting message
-│   ├── views
-│   │   └── Home.vue         # Main view component of the application
-│   ├── App.vue              # Root component of the application
-│   └── main.js              # Entry point of the Vue application
-├── public
-│   └── index.html           # Main HTML file for the application
-├── package.json             # npm configuration file
-├── vite.config.js           # Vite configuration file
-└── README.md                # Project documentation
+frontend/vue_app/
+├── src/
+│   ├── components/
+│   │   ├── AROverlay.vue
+│   │   ├── LandingPage.vue
+│   │   └── PracticeScreen.vue
+│   ├── router/
+│   │   └── index.js
+│   ├── assets/
+│   │   └── styles.css
+│   ├── App.vue
+│   └── main.js
+├── public/
+├── package.json
+└── vite.config.js
 ```
 
-## Setup Instructions
-1. **Clone the repository:**
-   ```
-   git clone <repository-url>
-   cd my-vue-app
-   ```
+## Setup and Installation
 
-2. **Install dependencies:**
-   ```
-   npm install
-   ```
+1. Install dependencies:
+```bash
+npm install
+```
 
-3. **Run the development server:**
-   ```
-   npm run dev
-   ```
+2. Create SSL certificates for HTTPS:
+```bash
+mkdir .cert
+openssl req -x509 -newkey rsa:2048 -keyout .cert/key.pem -out .cert/cert.pem -days 365 -nodes
+```
 
-4. **Open your browser:**
-   Navigate to `http://localhost:3000` to view the application.
+3. Start development server:
+```bash
+npm run dev
+```
 
-## Usage
-- The application includes a simple greeting component (`HelloWorld.vue`) and a main view (`Home.vue`).
-- You can modify the components and styles in the `src` directory to customize the application.
+## Development
 
-## Contributing
-Feel free to submit issues or pull requests for improvements or bug fixes. 
+- **Port**: 3000
+- **HTTPS**: Required for camera access
+- **API Proxy**: Configured to forward to backend at port 8000
+
+## Available Scripts
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Dependencies
+
+```json
+{
+  "dependencies": {
+    "vue": "^3.3.0",
+    "vue-router": "^4.0.0",
+    "three": "^0.160.0",
+    "aframe": "^1.4.2",
+    "@ar-js-org/ar.js": "^3.4.5"
+  }
+}
+```
+
+## Browser Support
+
+- Chrome (recommended)
+- Safari
+- Firefox
+- Edge
 
 ## License
-This project is licensed under the MIT License.
+
+MIT License
+
+Copyright (c) 2025 GK
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software...

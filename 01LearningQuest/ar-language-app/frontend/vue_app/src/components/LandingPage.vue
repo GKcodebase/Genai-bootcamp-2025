@@ -1,8 +1,7 @@
 <template>
   <div class="landing-page">
-    <!-- Rest of your existing template -->
+    <h1>Welcome to the Interactive Malayalam Learning App</h1>
     
-    <!-- Update AR Overlay position -->
     <div class="camera-section">
       <AROverlay
         v-if="showAR"
@@ -10,17 +9,18 @@
         @object-detected="handleObjectDetected"
       />
       
-      <!-- Your existing camera view -->
       <div v-if="showCamera" class="camera-container">
         <video ref="video" autoplay playsinline class="camera-view"></video>
-        <button @click="captureImage" class="capture-button">Capture</button>
-        <button @click="closeCamera" class="close-button">Close Camera</button>
+        <div class="controls-container">
+          <button @click="captureImage" class="capture-button">Capture</button>
+          <button @click="closeCamera" class="close-button">Close Camera</button>
+        </div>
       </div>
     </div>
     
     <!-- Rest of your existing template -->
     <div v-show="!showAR" class="main-content">
-      <h1>Welcome to the AR Language Learning App</h1>
+      <!-- <h1>Welcome to the Interactive Malayalam Learning App</h1> -->
       
       <!-- Scan Options -->
       <div class="scan-options">
@@ -304,9 +304,64 @@ export default {
 </script>
 
 <style scoped>
+/* Update these specific styles */
 .landing-page {
   padding: 20px;
   text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.camera-section {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  flex-shrink: 0; /* Prevent camera section from shrinking */
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.camera-view {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.controls-container {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+/* Update button positioning */
+.capture-button, 
+.close-button {
+  position: relative; /* Change from absolute to relative */
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+  z-index: 2;
 }
 
 .scan-options {
@@ -334,32 +389,6 @@ export default {
 
 .scan-button.ar:hover {
   background-color: #1976D2;
-}
-
-.camera-container {
-  margin-top: 20px;
-}
-
-.camera-view {
-  width: 100%;
-  max-width: 400px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.capture-button, .close-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 5px;
-}
-
-.capture-button:hover, .close-button:hover {
-  background-color: #45a049;
 }
 
 .result-container {
