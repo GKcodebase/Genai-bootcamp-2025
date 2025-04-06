@@ -161,3 +161,4 @@ cython_debug/
 lang-portal/backend-fastapi/alembic/versions/*
 /01LearningQuest/ar-language-app/frontend/vue_app/node_modules
 01LearningQuest/ar-language-app/frontend/vue_app/package-lock.json
+/01LearningQuest/ar-language-app/backend/static/audio

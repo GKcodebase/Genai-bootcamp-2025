@@ -1,21 +1,32 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from .routers import objects, audio, exercises
-from .database import Base, engine
+from .database import engine
+from . import models
 
-# Initialize database
-Base.metadata.create_all(bind=engine)
+# Create database tables
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Add CORS middleware with more permissive settings for development
+# Mount static files directory
+static_dir = Path("static")
+static_dir.mkdir(exist_ok=True)
+audio_dir = static_dir / "audio"
+audio_dir.mkdir(exist_ok=True)
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins in development
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
-    expose_headers=["*"]  # Expose all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 # Include routers
