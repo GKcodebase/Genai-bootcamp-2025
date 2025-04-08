@@ -1,69 +1,159 @@
-# Welcome to your Lovable project
+# Japanese Language Learning Portal (UI)
 
-## Project info
+A modern, desktop-focused Japanese language learning platform built with React and TypeScript. The application serves as a central hub for launching study activities, managing vocabulary, and tracking learning progress.
 
-**URL**: https://lovable.dev/projects/e8600904-3769-4eee-8ada-9dce85c0dafb
+## 📸 Screenshots
 
-## How can I edit this code?
+### Dashboard
+![Dashboard View](../ScreenShots/langportal-UI/landing.png)
+*Main dashboard showing learning progress and recent activities*
 
-There are several ways of editing your application.
+### Study Activities
+![Study Activities](../ScreenShots/langportal-UI/study-activities.png)
+*Study Activities*
 
-**Use Lovable**
+### Words
+![Dark Theme](../ScreenShots/langportal-UI/words.png)
+*Words*
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e8600904-3769-4eee-8ada-9dce85c0dafb) and start prompting.
+### Word Groups
+![Dark Theme](../ScreenShots/langportal-UI/Word-Groups.png)
+*Word Groups*
 
-Changes made via Lovable will be committed automatically to this repo.
+### Study Sessions
+![Dark Theme](../ScreenShots/langportal-UI/Study-Sessions.png)
+*Study Sessions*
 
-**Use your preferred IDE**
+### Dark Mode
+![Dark Theme](../ScreenShots/langportal-UI/dark.png)
+*Application interface in dark mode*
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Settings
+![Dark Theme](../ScreenShots/langportal-UI/settings.png)
+*Settings*
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Features
 
-Follow these steps:
+- **Study Activity Hub**
+  - Launch various learning activities
+  - Track session progress
+  - View activity history
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Vocabulary Management**
+  - Browse Japanese words with kanji, romaji, and English translations
+  - Audio playback for pronunciation
+  - Organize words into groups
+  - Track correct/incorrect answers
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Progress Tracking**
+  - Session history
+  - Performance analytics
+  - Learning statistics
 
-# Step 3: Install the necessary dependencies.
-npm i
+- **User Experience**
+  - Dark/Light theme toggle
+  - Intuitive navigation
+  - Breadcrumb navigation
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## 🛠️ Tech Stack
+
+- **Frontend Framework:** React.js
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Component Library:** shadcn/ui
+- **Build Tool:** Vite.js
+- **Router:** React Router DOM
+- **State Management:** React Query
+
+## 📦 Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd lang-portal-UI
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Start development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🗺️ Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+lang-portal-UI/
+├── src/
+│   ├── components/
+│   │   ├── layout/       # Layout components
+│   │   └── ui/          # UI components
+│   ├── pages/           # Page components
+│   ├── hooks/           # Custom hooks
+│   ├── lib/            # Utilities
+│   └── App.tsx         # Main app component
+├── public/             # Static assets
+└── screenshots/        # Application screenshots
+```
 
-**Use GitHub Codespaces**
+## 📱 Routes
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `/dashboard` - Overview and progress
+- `/study-activities` - Available learning activities
+- `/study-activities/:id` - Activity details
+- `/words` - Vocabulary list
+- `/words/:id` - Word details
+- `/groups` - Word groups
+- `/groups/:id` - Group details
+- `/sessions` - Study sessions
+- `/settings` - Application settings
 
-## What technologies are used for this project?
+## 🖼️ Adding Screenshots
 
-This project is built with .
+To add new screenshots:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. Create screenshots using your preferred tool
+2. Save them in the `screenshots` directory
+3. Use descriptive names (e.g., `dashboard-dark-mode.png`)
+4. Update the README.md to reference new screenshots
+5. Add appropriate captions and descriptions
 
-## How can I deploy this project?
+Screenshot naming convention:
+```
+screenshots/
+├── feature-name.png
+├── feature-name-dark.png
+└── feature-name-mobile.png
+```
 
-Simply open [Lovable](https://lovable.dev/projects/e8600904-3769-4eee-8ada-9dce85c0dafb) and click on Share -> Publish.
+## 🤝 Contributing
 
-## I want to use a custom domain - is that possible?
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/AmazingFeature`
+3. Commit your changes: `git commit -m 'Add AmazingFeature'`
+4. Push to the branch: `git push origin feature/AmazingFeature`
+5. Open a Pull Request
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔑 Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+VITE_API_URL=http://localhost:3000
+VITE_ASSETS_URL=http://localhost:3000/assets
+```
+
+## 📚 Documentation
+
+Additional documentation:
+- [Component Documentation](docs/components.md)
+- [API Integration Guide](docs/api.md)
+- [Styling Guide](docs/styling.md)
+- [Contributing Guide](docs/contributing.md)
