@@ -1,5 +1,83 @@
-# Running Ollama in Local
 
+# OPEA Components
+
+Open Platform for Enterprise AI (OPEA) components repository containing various AI service implementations.
+
+## 🚀 Services
+
+- **Mega Service**: Base LLM integration service
+- **TTS Service**: Text-to-Speech with voice cloning
+- **DB QnA**: Database question answering system
+
+## 🛠️ Prerequisites
+
+- Docker and Docker Compose
+- Python 3.9+
+- Node.js 20.11.1+ (for React applications)
+- Ollama (for local LLM)
+
+## 📦 Installation
+
+### Docker Setup (Mac)
+
+```bash
+# Install Docker Desktop for Mac
+brew install docker
+
+# Start Docker service
+open -a Docker
+```
+
+### Ollama Setup
+
+1. Install Ollama:
+```bash
+brew install ollama
+```
+
+2. Pull required model:
+```bash
+ollama pull llama3.2:1b
+```
+
+## 🚀 Quick Start
+
+1. Start services:
+```bash
+HOST_IP=$(ipconfig getifaddr en0) \
+NO_PROXY=localhost \
+LLM_ENDPOINT_PORT=9000 \
+LLM_MODEL_ID="llama3.2:1b" \
+docker compose up
+```
+
+2. Verify installation:
+```bash
+# Test Ollama API
+curl http://localhost:8008/api/generate -d '{
+  "model": "llama3.2:1b",
+  "prompt": "Hello!"
+}'
+```
+
+## 🔍 Services Overview
+
+### Mega Service
+- Port: 8000
+- FastAPI-based LLM service
+- Jaeger UI available at http://localhost:16686
+
+### TTS Service
+- Port: 9880
+- Voice cloning capabilities
+- Multiple voice duration support
+
+
+### DB QnA
+- React-based frontend
+- Natural language to SQL conversion
+- Database visualization
+# Running Ollama in Local
 
 ### Choosing a Model
 
@@ -20,7 +98,6 @@ HOST_IP=$(hostname -I | awk '{print $1}') NO_PROXY=localhost LLM_ENDPOINT_PORT=9
 Once the Ollama server is running we can make API calls to the ollama API
 
 https://github.com/ollama/ollama/blob/main/docs/api.md
-
 
 ## Download (Pull) a model
 
@@ -66,3 +143,9 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 newgrp docker
 ```
+
+## 📚 Documentation
+
+- [Mega Service](./mega-service/README.md)
+- [TTS Service](./mega-service-week3/tts/README.md)
+- [DB QnA](./mega-service-week3/dbqna/README.md)
