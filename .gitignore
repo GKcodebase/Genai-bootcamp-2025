@@ -166,3 +166,4 @@ lang-portal-vocab-importer/package-lock.json
 /01MalayalamLearningApp/ar-language-app/frontend/vue_app/node_modules
 /01MalayalamLearningApp/ar-language-app/backend/static/audio
 01MalayalamLearningApp/.DS_Store
+*.local
