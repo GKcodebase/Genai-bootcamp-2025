@@ -28,6 +28,16 @@ A web-based visual novel game designed to teach Japanese language through intera
 - Persistent game save system
 - Debug tools for development
 
+## Recent Feature Updates
+- Added new character interaction system
+- Improved text animation system
+- Enhanced audio system with new sound effects
+
+## Current Development Status
+- Version 1.2.0 in progress
+- Implementing new story branches
+- Adding more vocabulary and grammar exercises
+
 ## Requirements
 
 ### Prerequisites
@@ -127,6 +137,22 @@ Each path contains:
 - Vocabulary lists
 - Grammar explanations
 
+## 📸 Game Screenshots
+
+### Home Screen
+![Home Screen](../ScreenShots/Visual-Novel/Home.PNG)
+*Main menu with start game, load game, and settings options*
+
+### Settings Interface
+![Settings Menu](../ScreenShots/Visual-Novel/Settings.PNG)
+*Customize game settings including text speed, audio, and language preferences*
+
+### Gameplay Scenes
+![Classroom Scene](../ScreenShots/Visual-Novel/Screen-1.PNG)
+*Interactive classroom dialogue with language learning elements*
+
+![Cultural Festival](../ScreenShots/Visual-Novel/AnotherScreen.PNG)
+
 ## Contributing
 
 1. Fork the repository
@@ -134,6 +160,11 @@ Each path contains:
 3. Commit changes
 4. Push to branch
 5. Open a Pull Request
+
+### Contribution Guidelines Clarification
+- Ensure your code follows the project's coding standards
+- Write clear and concise commit messages
+- Include relevant tests for new features or bug fixes
 
 ## License
 
