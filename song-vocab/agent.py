@@ -11,7 +11,7 @@ class SongAgent:
     def __init__(self):
         logger.info("Initializing SongAgent")
         self.model = "llama3.2:1b"
-        self.ollama_client = ollama.Client(host='http://localhost:8008')
+        self.ollama_client = ollama.Client(host='http://localhost:11434')
         logger.debug(f"Initialized with model: {self.model}")
         
     async def process(self, song_request: str, primary_lang: str, target_lang: str):

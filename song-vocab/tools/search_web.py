@@ -13,7 +13,7 @@ def search_lyrics(song_name: str, language: str) -> list:
         "num": 20,  # Increased number of results
         "gl": "us",  # Set region to US for more reliable results
         # Filter out problematic sites known to block automated access
-        "exclude_sites": "genius.com,musixmatch.com",
+        # "exclude_sites": "genius.com,musixmatch.com",
         "safe": "active"  # Enable safe search to avoid inappropriate content
     })
     
