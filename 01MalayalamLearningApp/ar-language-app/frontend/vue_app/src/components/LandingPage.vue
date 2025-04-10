@@ -1,66 +1,69 @@
 <template>
-  <div class="landing-page">
-    <h1>Welcome to the Interactive Malayalam Learning App</h1>
-    
-    <div class="camera-section">
-      <AROverlay
-        v-if="showAR"
-        @exit-ar="handleARExit"
-        @object-detected="handleObjectDetected"
-      />
+  <div class="page-container">
+    <!-- <Header /> -->
+    <div class="landing-page">
+      <h1>Welcome to the Interactive Malayalam Learning App</h1>
       
-      <div v-if="showCamera" class="camera-container">
-        <video ref="video" autoplay playsinline class="camera-view"></video>
-        <div class="controls-container">
-          <button @click="captureImage" class="capture-button">Capture</button>
-          <button @click="closeCamera" class="close-button">Close Camera</button>
+      <div class="camera-section">
+        <AROverlay
+          v-if="showAR"
+          @exit-ar="handleARExit"
+          @object-detected="handleObjectDetected"
+        />
+        
+        <div v-if="showCamera" class="camera-container">
+          <video ref="video" autoplay playsinline class="camera-view"></video>
+          <div class="controls-container">
+            <button @click="captureImage" class="capture-button">Capture</button>
+            <button @click="closeCamera" class="close-button">Close Camera</button>
+          </div>
         </div>
       </div>
-    </div>
-    
-    <!-- Rest of your existing template -->
-    <div v-show="!showAR" class="main-content">
-      <!-- <h1>Welcome to the Interactive Malayalam Learning App</h1> -->
       
-      <!-- Scan Options -->
-      <div class="scan-options">
-        <button @click="startAR" class="scan-button ar">
-          Start AR Scan
-        </button>
-        <button @click="startCamera" class="scan-button">Use Camera</button>
-        <button @click="startFileUpload" class="scan-button">
-          Upload Image
-        </button>
-      </div>
+      <!-- Rest of your existing template -->
+      <div v-show="!showAR" class="main-content">
+        <!-- <h1>Welcome to the Interactive Malayalam Learning App</h1> -->
+        
+        <!-- Scan Options -->
+        <div class="scan-options">
+          <button @click="startAR" class="scan-button ar">
+            Start AR Scan
+          </button>
+          <button @click="startCamera" class="scan-button">Use Camera</button>
+          <button @click="startFileUpload" class="scan-button">
+            Upload Image
+          </button>
+        </div>
 
-      <!-- Results view -->
-      <div v-if="scanResult" class="result-container">
-        <h2>Scan Result:</h2>
-        <div class="result-card">
-          <img :src="capturedImage" alt="Scanned object" class="preview-image"/>
-          <p class="object-name">English: {{ scanResult.name }}</p>
-          <p class="translation">Malayalam: {{ scanResult.malayalam_translation }}</p>
-          <div class="action-buttons">
-            <button @click="startPractice" class="practice-button">Practice</button>
-            <button @click="resetScan" class="reset-button">New Scan</button>
-          </div>
-        </div>
-      </div>
-  
-      <!-- History Section -->
-      <div class="history-section">
-        <h2>Scan History</h2>
-        <div v-if="scanHistory && scanHistory.length > 0" class="history-list">
-          <div v-for="item in scanHistory" :key="item.id || item.object_id" class="history-item">
-            <div class="history-content">
-              <p><strong>Object:</strong> {{ item.name || item.object_name }}</p>
-              <p><strong>Translation:</strong> {{ item.malayalam_translation }}</p>
-              <p class="timestamp">{{ new Date(item.timestamp).toLocaleString() }}</p>
+        <!-- Results view -->
+        <div v-if="scanResult" class="result-container">
+          <h2>Scan Result:</h2>
+          <div class="result-card">
+            <img :src="capturedImage" alt="Scanned object" class="preview-image"/>
+            <p class="object-name">English: {{ scanResult.name }}</p>
+            <p class="translation">Malayalam: {{ scanResult.malayalam_translation }}</p>
+            <div class="action-buttons">
+              <button @click="startPractice" class="practice-button">Practice</button>
+              <button @click="resetScan" class="reset-button">New Scan</button>
             </div>
-            <button @click="startPracticeFromHistory(item)" class="practice-button">Practice</button>
           </div>
         </div>
-        <p v-else>No scan history available</p>
+    
+        <!-- History Section -->
+        <div class="history-section">
+          <h2>Scan History</h2>
+          <div v-if="scanHistory && scanHistory.length > 0" class="history-list">
+            <div v-for="item in scanHistory" :key="item.id || item.object_id" class="history-item">
+              <div class="history-content">
+                <p><strong>Object:</strong> {{ item.name || item.object_name }}</p>
+                <p><strong>Translation:</strong> {{ item.malayalam_translation }}</p>
+                <p class="timestamp">{{ new Date(item.timestamp).toLocaleString() }}</p>
+              </div>
+              <button @click="startPracticeFromHistory(item)" class="practice-button">Practice</button>
+            </div>
+          </div>
+          <p v-else>No scan history available</p>
+        </div>
       </div>
     </div>
   </div>
@@ -68,6 +71,7 @@
 
 <script>
 import AROverlay from './AROverlay.vue'
+import Header from './Header.vue'
 
 const DEBUG = true; // Enable/disable debug logging
 
@@ -77,10 +81,33 @@ function log(...args) {
   }
 }
 
+const fetchHistory = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/history', {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    throw error;
+  }
+};
+
 export default {
   name: 'LandingPage',
   components: {
-    AROverlay
+    AROverlay,
+    Header
   },
   data() {
     return {
@@ -205,20 +232,7 @@ export default {
     async loadHistory() {
       try {
         log('Loading history...');
-        const response = await fetch('http://127.0.0.1:8000/api/history', {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          mode: 'cors'
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchHistory();
         log('History data received:', data);
 
         if (!data || (!Array.isArray(data) && !Array.isArray(data.items))) {
@@ -304,13 +318,18 @@ export default {
 </script>
 
 <style scoped>
-/* Update these specific styles */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 .landing-page {
+  flex: 1;
   padding: 20px;
   text-align: center;
   max-width: 800px;
   margin: 0 auto;
-  height: 100vh;
   display: flex;
   flex-direction: column;
 }

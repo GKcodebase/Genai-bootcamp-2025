@@ -127,3 +127,10 @@ Append to the existing `app.db`:
 
 ## Hardware Compatibility Notes
 All AI tools (e.g., GPT-2 small, Mozilla TTS, eSpeak) are open-source and run locally on an Intel Core i5 with 8 GB RAM, consistent with the main app’s requirements. Word generation uses lightweight models or rule-based logic to ensure performance.
+
+## Non functional hard requirements
+- There should be minimal changes in the existing code
+- Exisiting functionalities should not be broken
+- [Exisiting Featuers](./Technical-Spec.md)
+- New Featuers should use existing Technologies
+- New Featuers should intergerate with exisiting feature smootly.

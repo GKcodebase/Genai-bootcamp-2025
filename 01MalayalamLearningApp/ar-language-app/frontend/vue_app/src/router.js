@@ -13,7 +13,12 @@ const routes = [
     name: 'Practice',
     component: PracticeScreen,
     props: true
-  }
+  },
+  {
+    path: '/alphabets',
+    name: 'Alphabets',
+    component: () => import('@/components/AlphabetScreen.vue')
+  },
 ];
 
 const router = createRouter({

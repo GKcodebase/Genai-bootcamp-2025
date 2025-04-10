@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class ObjectBase(BaseModel):
     name: str
@@ -29,3 +29,24 @@ class Exercise(ExerciseBase):
 
     class Config:
         from_attributes = True
+
+class Alphabet(BaseModel):
+    id: int
+    malayalam_char: str
+    english_transliteration: str
+    audio_url: str
+
+    class Config:
+        from_attributes = True  # replaces orm_mode
+
+class GeneratedWord(BaseModel):
+    word: str
+    english_translation: str
+    pronunciation: str
+
+    class Config:
+        from_attributes = True
+
+class WordResponse(BaseModel):
+    alphabet_id: int
+    words: List[GeneratedWord]
