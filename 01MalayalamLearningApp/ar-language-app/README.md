@@ -1,6 +1,6 @@
-# Interactive Malaylam Learning App
+# Interactive Malayalam Learning App
 
-An augmented reality application that helps users learn Malayalam through real-world object detection and interactive language exercises.
+An augmented reality application that helps users learn Malayalam through real-world object detection, interactive language exercises, and alphabet learning.
 
 ## Features
 
@@ -10,6 +10,11 @@ An augmented reality application that helps users learn Malayalam through real-w
 - History tracking of scanned objects
 - Audio generation for pronunciations
 - Speech verification for practice
+- **NEW: Interactive Alphabet Learning**
+  - Complete Malayalam alphabet grid with transliterations
+  - Audio pronunciations for each alphabet
+  - AI-generated example words for practice
+  - Dynamic word generation for expanded vocabulary
 
 ## Screenshots
 
@@ -30,6 +35,13 @@ An augmented reality application that helps users learn Malayalam through real-w
         ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.41.10 PM.png>)
 - History view: See the historic practice and retry learning.
     ![alt text](<ScreenShots/Screenshot 2025-04-06 at 3.50.04 PM.png>)
+- Alphabet Learning Screen
+  - View all Malayalam alphabets with transliterations
+  - Click to hear pronunciations
+  - Generate example words for practice
+    ![Alphabet Learning Screen](ScreenShots/alphabets.png)
+    ![Alphabet Learning Screen](ScreenShots/alphabets-words.png)
+
 
 ## Tech Stack
 
@@ -43,8 +55,11 @@ An augmented reality application that helps users learn Malayalam through real-w
 - FastAPI (Python)
 - SQLite3
 - Google Gemini API for AI features
+  - Object detection
+  - **Word generation for alphabet learning**
 - Whisper for speech recognition
 - gTTS for text-to-speech
+- **AI-powered word generation for alphabet practice**
 
 ## System Requirements
 - Intel Core i5 processor / Mac book air m1
@@ -85,17 +100,68 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-4. Start the frontend:
+4. Initialize the database and alphabet data:
+```bash
+cd backend
+
+# Create and initialize the database
+python -m app.utils.create_db
+
+# Generate alphabet audio files
+python -m app.utils.generate_alphabet_audio
+
+# Seed the database with Malayalam alphabets
+python -m app.utils.seed_alphabets
+```
+
+5. Start the frontend:
 ```bash
 cd frontend/vue_app
 npm install
 npm run dev
 ```
 
-5. Access the application:
+6. Access the application:
    - Open https://localhost:3000 in your browser
    - Accept the SSL certificate warning
    - Grant camera permissions when prompted
+
+## Database Structure
+
+### Alphabets Table
+```sql
+CREATE TABLE alphabets (
+    id INTEGER PRIMARY KEY,
+    malayalam_char TEXT UNIQUE,
+    english_transliteration TEXT,
+    audio_url TEXT
+);
+```
+
+### Generated Words Table
+```sql
+CREATE TABLE generated_words (
+    id INTEGER PRIMARY KEY,
+    alphabet_id INTEGER,
+    word TEXT,
+    english_translation TEXT,
+    pronunciation TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (alphabet_id) REFERENCES alphabets (id)
+);
+```
+
+## Audio Files Structure
+```
+backend/
+└── static/
+    └── audio/
+        └── alphabets/
+            ├── a.mp3    # അ
+            ├── aa.mp3   # ആ
+            ├── i.mp3    # ഇ
+            └── ...
+```
 
 ## Workflow
 
@@ -114,6 +180,15 @@ npm run dev
 3. **History**
    - View previously scanned objects
    - Access practice exercises for any item
+   - Track learning progress
+
+4. **NEW: Alphabet Learning**
+   - Access from landing page
+   - Click any alphabet to:
+     - Hear pronunciation
+     - See English transliteration
+     - View example words
+   - Generate new practice words
    - Track learning progress
 
 ## Contributing
