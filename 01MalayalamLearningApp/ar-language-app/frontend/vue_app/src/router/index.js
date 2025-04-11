@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LandingPage from '@/components/LandingPage.vue'
+import LandingPage from '../components/LandingPage.vue'
 import PracticeScreen from '@/components/PracticeScreen.vue'
+import AlphabetScreen from '../components/AlphabetScreen.vue'
+import MoviePlotScreen from '../components/MoviePlotScreen.vue'
 
 const routes = [
   {
@@ -17,6 +19,11 @@ const routes = [
     path: '/alphabets',
     name: 'Alphabets',
     component: () => import('@/components/AlphabetScreen.vue')
+  },
+  {
+    path: '/movie-plot',
+    name: 'MoviePlot',
+    component: () => import('@/components/MoviePlotScreen.vue')
   },
   {
     path: '/:pathMatch(.*)*',

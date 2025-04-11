@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
-from .routers import objects, audio, exercises, alphabets
+from .routers import objects, audio, exercises, alphabets, movies
 from .database import engine
 from . import models
 
@@ -11,13 +11,15 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Mount static files directory
-static_dir = Path("static")
+# Create base static directory and subdirectories
+base_dir = Path(__file__).parent.parent
+static_dir = base_dir / "static"
 static_dir.mkdir(exist_ok=True)
-audio_dir = static_dir / "audio"
-audio_dir.mkdir(exist_ok=True)
+movies_dir = static_dir / "audio" / "movies"
+movies_dir.mkdir(parents=True, exist_ok=True)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files with absolute path
+app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 # Update CORS middleware with more permissive settings for development
 app.add_middleware(
@@ -41,3 +43,4 @@ app.include_router(objects.router, prefix="/api")
 app.include_router(audio.router, prefix="/api")
 app.include_router(exercises.router, prefix="/api")
 app.include_router(alphabets.router, prefix="/api")
+app.include_router(movies.router, prefix="/api")

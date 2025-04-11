@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
@@ -28,7 +28,7 @@ class Alphabet(Base):
     id = Column(Integer, primary_key=True, index=True)
     malayalam_char = Column(String, unique=True)
     english_transliteration = Column(String)
-    audio_url = Column(String)  # Keep this field
+    audio_url = Column(String)
     
     words = relationship("GeneratedWord", back_populates="alphabet")
 
@@ -43,3 +43,13 @@ class GeneratedWord(Base):
     timestamp = Column(DateTime, default=datetime.utcnow)
     
     alphabet = relationship("Alphabet", back_populates="words")
+
+class MoviePlot(Base):
+    __tablename__ = "movie_plots"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    movie_name = Column(String, unique=True)
+    english_plot = Column(Text, nullable=False)  # Ensure this is not nullable
+    malayalam_plot = Column(Text)
+    audio_url = Column(String)
+    timestamp = Column(DateTime, default=datetime.utcnow)

@@ -50,3 +50,27 @@ class GeneratedWord(BaseModel):
 class WordResponse(BaseModel):
     alphabet_id: int
     words: List[GeneratedWord]
+
+class MoviePlotRequest(BaseModel):
+    movie_name: str
+
+class MoviePlotResponse(BaseModel):
+    movie_id: int
+    movie_name: str
+    english_plot: str  # Required field
+    malayalam_plot: str
+    audio_url: str
+
+    class Config:
+        from_attributes = True  # Enable ORM mode
+
+class ChatRequest(BaseModel):
+    movie_id: int
+    message: str
+
+class ChatResponse(BaseModel):
+    english_response: str
+    malayalam_response: str
+
+    class Config:
+        from_attributes = True

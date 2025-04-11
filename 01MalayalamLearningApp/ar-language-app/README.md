@@ -15,6 +15,12 @@ An augmented reality application that helps users learn Malayalam through real-w
   - Audio pronunciations for each alphabet
   - AI-generated example words for practice
   - Dynamic word generation for expanded vocabulary
+- **NEW: Movie Plot Learning**
+  - Search for any movie to get its plot in Malayalam
+  - Listen to plot narration in Malayalam
+  - Interactive bilingual chat about the movie
+  - Real-time English-Malayalam translations
+  - AI-powered movie context-aware responses
 
 ## Screenshots
 
@@ -41,7 +47,12 @@ An augmented reality application that helps users learn Malayalam through real-w
   - Generate example words for practice
     ![Alphabet Learning Screen](ScreenShots/alphabets.png)
     ![Alphabet Learning Screen](ScreenShots/alphabets-words.png)
-
+- Movie Plot Learning Screen
+  - Search any movie to get plot details
+  - View plot in English and Malayalam, listen to malayalam
+  - Chat with AI about the movie
+    ![Movie Plot Screen](ScreenShots/movie-plot.png)
+    ![Movie Chat Screen](ScreenShots/chataboutMovie.png)
 
 ## Tech Stack
 
@@ -60,6 +71,10 @@ An augmented reality application that helps users learn Malayalam through real-w
 - Whisper for speech recognition
 - gTTS for text-to-speech
 - **AI-powered word generation for alphabet practice**
+- OMDB API for movie data
+- Deep Translator for accurate Malayalam translations
+- Google Gemini Pro for context-aware movie chat
+- gTTS for Malayalam audio generation
 
 ## System Requirements
 - Intel Core i5 processor / Mac book air m1
@@ -89,6 +104,7 @@ cd ar-language-app
 ```bash
 # In backend/.env
 GEMINI_API_KEY=your_api_key_here
+OMDB_API_KEY=your_omdb_api_key_here
 ```
 
 3. Start the backend:
@@ -151,15 +167,28 @@ CREATE TABLE generated_words (
 );
 ```
 
+### Movie Plots Table
+```sql
+CREATE TABLE movie_plots (
+    id INTEGER PRIMARY KEY,
+    movie_name TEXT UNIQUE,
+    english_plot TEXT,
+    malayalam_plot TEXT,
+    audio_url TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
 ## Audio Files Structure
 ```
 backend/
 └── static/
     └── audio/
-        └── alphabets/
-            ├── a.mp3    # അ
-            ├── aa.mp3   # ആ
-            ├── i.mp3    # ഇ
+        ├── alphabets/
+        │   └── ...
+        └── movies/
+            ├── titanic.mp3
+            ├── avatar.mp3
             └── ...
 ```
 
@@ -190,6 +219,14 @@ backend/
      - View example words
    - Generate new practice words
    - Track learning progress
+
+5. **Movie Plot Learning**
+   - Search for any movie
+   - Read plot in English and Malayalam
+   - Listen to Malayalam narration
+   - Chat with AI about movie details
+   - Get bilingual responses
+   - Practice comprehension through conversation
 
 ## Contributing
 

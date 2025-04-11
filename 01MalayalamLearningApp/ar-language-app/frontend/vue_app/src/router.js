@@ -19,6 +19,11 @@ const routes = [
     name: 'Alphabets',
     component: () => import('@/components/AlphabetScreen.vue')
   },
+  {
+    path: '/movie-plot',
+    name: 'MoviePlot',
+    component: () => import('@/components/MoviePlotScreen.vue')
+  },
 ];
 
 const router = createRouter({
