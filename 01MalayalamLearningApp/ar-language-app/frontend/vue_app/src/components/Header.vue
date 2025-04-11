@@ -3,6 +3,7 @@
     <div class="nav-links">
       <router-link to="/" class="nav-link">Home</router-link>
       <router-link to="/alphabets" class="nav-link">Learn Alphabets</router-link>
+      <router-link to="/movie-plot" class="nav-link">Movie Plot</router-link>
     </div>
   </header>
 </template>
