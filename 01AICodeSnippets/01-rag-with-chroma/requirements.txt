@@ -1,0 +1,26 @@
+# RAG-specific dependencies
+groq>=0.4.0
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+langchain>=0.1.0
+langchain-groq>=0.0.1
+
+# Document processing
+pypdf2>=3.0.0,<4.0.0
+python-docx>=0.8.11
+python-pptx>=0.6.21
+beautifulsoup4>=4.12.0
+
+# UI and utilities
+gradio>=3.50.0
+streamlit>=1.28.0
+python-dotenv>=1.0.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Text processing
+tiktoken>=0.5.0
+
+# Add these lines
+psutil>=5.9.0
+tqdm>=4.65.0  # For progress bars 
