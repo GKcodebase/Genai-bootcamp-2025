@@ -2,7 +2,7 @@
 
 ## 🔄 System Flow Diagram
 
-![RAG System Flow](screenshots/flow-chart.png)
+![RAG System Flow](images/flow-chart.png)
 
 ## 🏗️ Architecture Components
 
