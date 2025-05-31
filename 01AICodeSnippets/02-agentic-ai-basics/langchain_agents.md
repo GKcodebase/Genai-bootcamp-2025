@@ -1,5 +1,113 @@
 # LangChain Agents Architecture 🤖
 
+## What is LangChain?
+
+LangChain is a framework for developing applications powered by language models. It provides:
+
+### Core Capabilities
+1. **Model Integration**
+   - Connect with various LLMs (OpenAI, Anthropic, Google, etc.)
+   - Standardized interface for model interactions
+   - Easy switching between different providers
+
+2. **Chains**
+   - Combine multiple operations into sequences
+   - Create complex workflows
+   - Handle input/output transformations
+
+3. **Agents**
+   - Autonomous task execution
+   - Tool usage and selection
+   - Dynamic decision making
+
+4. **Memory**
+   - Conversation history management
+   - State persistence
+   - Context windows
+
+### Use Cases
+
+1. **Document Processing**
+   - Question answering over documents
+   - Summarization
+   - Information extraction
+   - Document comparison
+
+2. **Chatbots**
+   - Customer service
+   - Technical support
+   - Educational assistants
+   - Interactive agents
+
+3. **Data Analysis**
+   - Data exploration
+   - Pattern recognition
+   - Report generation
+   - Insights extraction
+
+4. **Code Understanding**
+   - Code analysis
+   - Documentation generation
+   - Bug finding
+   - Code explanation
+
+### Architecture Overview
+
+![RAG System Overview](./images/LC-Arch.png)
+
+### Key Components
+
+1. **Models (LLMs)**
+   - Text generation
+   - Embeddings
+   - Chat models
+   - Function calling
+
+2. **Prompts**
+   - Templates
+   - Few-shot examples
+   - Dynamic prompting
+   - Prompt optimization
+
+3. **Memory Systems**
+   - Buffer memory
+   - Summary memory
+   - Vector store memory
+   - Custom memory
+
+4. **Tools & Toolkits**
+   - Web tools
+   - Math tools
+   - API integrations
+   - Custom tools
+
+### Integration Methods
+
+1. **Python SDK**
+```python
+from langchain.llms import OpenAI
+from langchain.agents import Tool, AgentExecutor
+from langchain.memory import ConversationBufferMemory
+
+# Initialize components
+llm = OpenAI()
+memory = ConversationBufferMemory()
+tools = [Tool(...)]
+
+# Create agent
+agent = AgentExecutor.from_agent_and_tools(
+    agent=agent,
+    tools=tools,
+    memory=memory
+)
+```
+
+2. **LangServe**
+   - Deploy as API
+   - Serverless functions
+   - Cloud deployment
+   - Monitoring & logging
+
 ## System Overview
 
 ![RAG System Overview](./images/LC-systemoverview.png)
