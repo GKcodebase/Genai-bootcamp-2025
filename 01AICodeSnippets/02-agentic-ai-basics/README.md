@@ -43,6 +43,59 @@ Build intelligent AI agents that can perform tasks autonomously using **complete
 - Automatic mode detection
 - Interactive command interface
 
+### 4. **LangChain Agents**
+The project now includes LangChain-based implementations in the `src/langchain_agents` directory:
+
+#### Base Agent
+- `BaseLangChainAgent`: A flexible base agent that supports multiple LLM providers:
+  - Google AI (Gemini)
+  - Anthropic (Claude)
+  - Groq (Llama)
+
+#### Tools Agent
+- Location: `tools_langchain_agent.py`
+- Features:
+  - Weather information lookup
+  - Time zone conversions
+  - Date calculations
+  - URL shortening
+  - Text analysis
+
+#### Usage Example
+```python
+from langchain_agents.tools_langchain_agent import ToolsLangChainAgent
+
+# Initialize the agent
+agent = ToolsLangChainAgent(
+    model_name="gemini-pro",
+    temperature=0.7
+)
+
+# Run a simple task
+result = agent.run("What date will it be in 14 days?")
+print(result["output"])
+
+# Run a complex task
+complex_task = """
+I need to know the weather in Tokyo, Japan, and then calculate what date it will be 14 days from now.
+Also, please analyze this text: 'The quick brown fox jumps over the lazy dog.'
+"""
+result = agent.run(complex_task)
+print(result["output"])
+```
+
+#### Additional API Keys for LangChain Agents
+Add these to your `.env` file:
+```env
+# At least one of these API keys is required:
+GOOGLE_AI_API_KEY=your_key_here
+ANTHROPIC_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here
+
+# Optional for weather functionality:
+OPENWEATHER_API_KEY=your_key_here
+```
+
 ## 📚 Examples & Usage
 
 ### Basic Research Agent
