@@ -29,8 +29,8 @@ cd 04-agentic-workflows
 
 2. Create a virtual environment:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 ```
 
 3. Install dependencies:
@@ -49,6 +49,39 @@ GROQ_API_KEY=your_groq_api_key
 ANTHROPIC_API_KEY=your_anthropic_api_key
 GOOGLE_API_KEY=your_google_api_key
 ```
+
+## Project Structure
+
+```
+04-agentic-workflows/
+├── src/
+│   ├── agents/
+│   │   ├── base_workflow_agent.py
+│   │   ├── content.py
+│   │   └── research.py
+│   └── workflows/
+│       ├── research_workflow.py
+│       └── content_workflow.py
+├── tests/
+│   └── test_setup.py
+├── examples/
+│   └── workflow_example.py
+├── requirements.txt
+├── setup.py
+├── env.example
+└── README.md
+```
+
+## Dependencies
+
+The project uses the following key dependencies:
+- `groq==0.27.0`: For Groq LLM integration
+- `anthropic==0.8.1`: For Claude API integration
+- `google-generativeai==0.3.2`: For Google AI integration
+- `langchain==0.1.12`: For LLM workflow orchestration
+- `pydantic==2.6.3`: For data validation
+- `tenacity==8.2.3`: For retry mechanisms
+- `python-dotenv==1.0.1`: For environment variable management
 
 ## Usage
 
@@ -90,23 +123,16 @@ article = content.generate_content(
 print(article['final_content'])  # Get the final content
 ```
 
-## Project Structure
+## Testing
 
-```
-04-agentic-workflows/
-├── src/
-│   ├── agents/
-│   │   ├── base_workflow_agent.py
-│   │   ├── content.py
-│   │   └── research.py
-│   └── workflows/
-│       ├── research_workflow.py
-│       └── content_workflow.py
-├── examples/
-│   └── workflow_example.py
-├── requirements.txt
-├── setup.py
-└── README.md
+The project includes a comprehensive test suite. To run the tests:
+
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run specific test file
+python -m pytest tests/test_setup.py
 ```
 
 ## Agent Types
