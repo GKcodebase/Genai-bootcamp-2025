@@ -1,0 +1,14 @@
+groq==0.27.0
+anthropic==0.8.1
+google-generativeai==0.3.2
+tenacity==8.2.3
+requests==2.31.0
+python-dotenv==1.0.1
+typing-extensions>=4.10.0
+pydantic==2.6.3
+aiohttp==3.9.3
+langchain==0.1.12
+langchain-community==0.0.28
+langchain-core==0.1.32
+langchain-groq==0.0.1
+tenacity>=8.2.3 
