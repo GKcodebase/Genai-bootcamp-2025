@@ -11,10 +11,10 @@ A comprehensive collection of developer-level tutorials covering cutting-edge AI
 | [01-rag-with-chroma](./01-rag-with-chroma/) | Retrieval Augmented Generation | ChromaDB, Groq, Free Embeddings | 🆓 | ⭐⭐ |
 | [02-agentic-ai-basics](./02-agentic-ai-basics/) | Agentic AI Fundamentals | LangChain, Groq, Free Tools | 🆓 | ⭐⭐ |
 | [03-agentic-rag](./03-agentic-rag/) | Agentic RAG Systems | ChromaDB, Groq, Function Calling | 🆓 | ⭐⭐⭐ |
-| [04-google-agentic-sdk](./04-google-agentic-sdk/) | Google Vertex AI Agents | Gemini API (Free tier) | 🆓 | ⭐⭐ |
+| [04-ai-workflows](./07-ai-workflows/) | Complex AI Pipelines | LangGraph, Multiple Free APIs | 🆓 | ⭐⭐⭐ |
 | [05-mcp-integration](./05-mcp-integration/) | Model Context Protocol | MCP, Claude (Free tier) | 🆓 | ⭐⭐⭐ |
 | [06-multimodal-ai](./06-multimodal-ai/) | Vision & Audio Processing | Gemini Vision, Whisper | 🆓 | ⭐⭐ |
-| [07-ai-workflows](./07-ai-workflows/) | Complex AI Pipelines | LangGraph, Multiple Free APIs | 🆓 | ⭐⭐⭐ |
+| [07-google-agentic-sdk](./04-google-agentic-sdk/) | Google Vertex AI Agents | Gemini API (Free tier) | 🆓 | ⭐⭐ |
 | [08-vllm-deployment](./08-vllm-deployment/) | Local LLM Deployment | vLLM, Ollama, FastAPI | 🆓 | ⭐⭐⭐ |
 
 ## 💰 Cost Breakdown
