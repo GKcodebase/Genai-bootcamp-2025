@@ -1,0 +1,18 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="google-agentic-sdk",
+    version="0.1.0",
+    packages=find_packages(),
+    install_requires=[
+        "google-cloud-aiplatform>=1.36.0",
+        "google-generativeai>=0.3.0",
+        "python-dotenv>=0.19.0",
+        "fastapi>=0.68.0",
+        "uvicorn>=0.15.0",
+        "pydantic>=1.8.2",
+        "requests>=2.26.0",
+        "python-multipart>=0.0.5",
+    ],
+    python_requires=">=3.9",
+) 
