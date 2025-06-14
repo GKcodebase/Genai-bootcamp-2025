@@ -14,8 +14,8 @@ A comprehensive collection of developer-level tutorials covering cutting-edge AI
 | [04-ai-workflows](./07-ai-workflows/) | Complex AI Pipelines | LangGraph, Multiple Free APIs | 🆓 | ⭐⭐⭐ |
 | [05-mcp-integration](./05-mcp-integration/) | Model Context Protocol | MCP, Claude (Free tier) | 🆓 | ⭐⭐⭐ |
 | [06-multimodal-ai](./06-multimodal-ai/) | Vision & Audio Processing | Gemini Vision, Whisper | 🆓 | ⭐⭐ |
-| [07-google-agentic-sdk](./04-google-agentic-sdk/) | Google Vertex AI Agents | Gemini API (Free tier) | 🆓 | ⭐⭐ |
-| [08-vllm-deployment](./08-vllm-deployment/) | Local LLM Deployment | vLLM, Ollama, FastAPI | 🆓 | ⭐⭐⭐ |
+| [07-google-agentic-sdk](./07-google-agentic-sdk/) | Google Vertex AI Agents | Gemini API (Free tier) | 🆓 | ⭐⭐ |
+| [08-Ollama-deployment](./08-Ollama-deployment/) | Local ollama Deployment | Ollama, FastAPI | 🆓 | ⭐⭐⭐ |
 
 ## 💰 Cost Breakdown
 
